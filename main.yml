@@ -13,6 +13,9 @@
     root_db_pass: "{{ lookup('env', 'ROOT_DB_PASS') }}"
     wp_db_pass: "{{ lookup('env', 'WP_DB_PASS') }}"
 
+    wp_admin_pass: "{{ lookup('env', 'WP_ADMIN_PASS') }}"
+    admin_email: "{{ lookup('env', 'EMAIL') }}"
+
     import_db: "{{ lookup('env', 'IMPORT_DB') }}"
 
   roles:
