@@ -10,3 +10,7 @@ MariaDB passwords which are passed to Ansible.
 If provisioning fails, the configuration is written to disk.  Delete
 it immediately if you don’t want to try again, since it will contain
 passwords in plain-text.
+
+## Prerequisites
+
+- Ansible 2.x.x
