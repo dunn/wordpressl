@@ -105,7 +105,7 @@ write_hosts > hosts
 write_conf > ansible.cfg
 run_cmd "ansible-playbook main.yml -vv -u root"
 if [ "$EXIT_STATUS" == "0" ]; then
-  rm -f "config-$NOW.log"
+  rm -f config-*.log
   echo "Provisioning complete."
 else
   echo
