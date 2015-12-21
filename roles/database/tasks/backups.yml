@@ -2,5 +2,7 @@
 - name: create backup script
   template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700 owner={{ deploy_user }} group={{ deploy_group }}
 
-- name: install cron job
-  template: src=wp-cron.j2 dest=/var/spool/cron/deploy mode=0400 owner={{ deploy_user }} group={{ deploy_group }}
+- name: run backups every day
+  cron: user={{ deploy_user }} hour="0" name="db backup" \
+        job="/usr/local/bin/wp-backup >> /www/backups/error.log 2>&1" \
+        cron_file=ansible_db

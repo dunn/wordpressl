@@ -13,3 +13,5 @@
 
 - include: install.yml
   when: wp_content.stat.exists == False
+
+- include: plugins.yml
