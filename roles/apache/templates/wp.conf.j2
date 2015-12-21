@@ -9,13 +9,5 @@
     Options +Indexes +FollowSymLinks -MultiViews
     AllowOverride All
     Require all granted
-
-    <IfModule php5_module>
-      AddType application/x-httpd-php .php
-      AddType application/x-httpd-php-source .phps
-      <IfModule dir_module>
-          DirectoryIndex index.php index.html
-      </IfModule>
-    </IfModule>
   </Directory>
 </VirtualHost>
