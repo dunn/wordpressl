@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+#
+# Functions
+#
+run_cmd() {
+  local cmd
+  cmd="$*"
+  echo "$(tput bold)==> $*$(tput sgr0)"
+  eval "$cmd"
+
+  exit_code=$?
+
+  if [ "$exit_code" != "0" ]; then
+    echo "$(tput setaf 124)Failed ($exit_code):$(tput sgr0) $cmd"
+  fi
+  export EXIT_STATUS="$exit_code"
+}
+
+write_savepoint() {
+  cat <<EOF
+#!/bin/bash
+export IDENTITY="$IDENTITY"
+export IMPORT_DB="$IMPORT_DB"
+export REMOTE_USER="$REMOTE_USER"
+export ROOT_DB_PASS="$ROOT_DB_PASS"
+export SERVER="$SERVER"
+export WP_DB_PASS="$WP_DB_PASS"
+EOF
+}
+
+write_hosts() {
+  cat <<EOF
+[centos]
+wp ansible_ssh_host=$SERVER
+EOF
+}
+
+write_conf() {
+cat <<EOF
+[defaults]
+private_key_file=$IDENTITY
+host_key_checking = False
+control_path = %(directory)s/%%h-%%r
+inventory = $(pwd)/hosts
+
+[ssh_connection]
+scp_if_ssh=True
+EOF
+}
+
+NOW="$(date "+%Y-%m-%d-%H%M%S")"
+export NOW
+
+# If they pass a config file from a previous try
+if [ -f "$1" ]; then
+  # shellcheck source=/dev/null
+  . "$1"
+else
+  #
+  # Set/export variables
+  #
+  ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
+  export ANSIBLE_CONFIG
+
+  echo -n "Set SERVER: "
+  read -r SERVER
+  echo "Setting SERVER to '$SERVER'"
+  export SERVER
+
+  echo -n "Specify path to identity file (default ~/.ssh/id_rsa): "
+  read -r -e IDENTITY
+  IDENTITY=${IDENTITY:-"$HOME/.ssh/id_rsa"}
+  export IDENTITY
+
+  echo
+  echo -n "Enter password for MariaDB root user: "
+  read -r -s ROOT_DB_PASS
+  export ROOT_DB_PASS
+
+  echo
+  echo -n "Enter password for MariaDB wordpress user: "
+  read -r -s WP_DB_PASS
+  export WP_DB_PASS
+
+  echo
+  echo -n "Specify path to DB dump to import (leave blank if none): "
+  read -r -e IMPORT_DB
+
+  write_savepoint > "config-$NOW.log"
+  chmod 600 "config-$NOW.log"
+fi
+
+write_hosts > hosts
+write_conf > ansible.cfg
+run_cmd "ansible-playbook main.yml -vv -u root"
+if [ "$EXIT_STATUS" == "0" ]; then
+  rm -f "config-$NOW.log"
+  echo "Provisioning complete."
+  echo
+  echo "Complete WordPress setup at http://$SERVER/wp-config.php"
+else
+  echo
+  echo "$(tput bold)==> Configuration saved to $(ls config-* | tr -d '\n')$(tput sgr0)"
+  echo 'Re-run with `bin/create'" config-$NOW.log"'`'", or delete it NOW."
+  echo
+fi

@@ -1,0 +1,36 @@
+---
+- name: set MariaDB root password
+  mysql_user: name=root password={{ root_db_pass }}
+
+- name: disable remote root login
+  no_log: True
+  command: mysql -u root --password={{ root_db_pass }} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+
+# Can change to hosts_all=yes in 2.1
+- name: remove anonymous roles
+  mysql_user: name='' host=localhost state=absent login_password={{ root_db_pass }}
+- name: remove anonymous roles
+  mysql_user: name='' host=127.0.01 state=absent login_password={{ root_db_pass }}
+- name: remove anonymous roles
+  mysql_user: name='' host="::1" state=absent login_password={{ root_db_pass }}
+
+- name: remove test database
+  mysql_db: name=test state=present login_password={{ root_db_pass }} login_user=root
+
+- name: flush privileges
+  no_log: True
+  command: mysql -u root --password={{ root_db_pass }} -e "FLUSH PRIVILEGES;"
+
+- name: create wordpress database
+  mysql_db: name=wordpress state=present \
+            login_password={{ root_db_pass }} login_user=root
+
+- name: create wordpress role
+  mysql_user: name=wp password={{ wp_db_pass }} priv="wordpress.*:ALL" state=present \
+              login_password={{ root_db_pass }} login_user=root
+
+- name: create MariaDB configuration
+  template: src=my.cnf.j2 dest=/root/.my.cnf
+
+- name: restart MariaDB
+  service: name=mariadb state=restarted enabled=yes

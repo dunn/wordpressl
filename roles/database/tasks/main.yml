@@ -1,0 +1,12 @@
+---
+- name: start MariaDB
+  service: name=mariadb state=restarted enabled=yes
+
+- name: check for existing MariaDB configuration
+  stat: path=/root/.my.cnf
+  register: my_cnf
+
+- include: init.yml
+  when: my_cnf.stat.exists == False
+
+- include: backups.yml

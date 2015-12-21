@@ -1,0 +1,15 @@
+---
+- name: copy existing database
+  when: import_db != ""
+  copy: src={{ import_db }} dest=/www/import.sql
+
+- name: import database
+  when: import_db != ""
+  mysql_db: name=wordpress state=import target=/www/import.sql
+
+- name: check for existing WordPress installation
+  stat: path=/www/wp-content
+  register: wp_content
+
+- include: install.yml
+  when: wp_content.stat.exists == False

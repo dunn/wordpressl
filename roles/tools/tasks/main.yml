@@ -1,0 +1,38 @@
+---
+- name: add MariaDB repo
+  copy: src=MariaDB.repo dest=/etc/yum.repos.d/MariaDB.repo
+
+- name: add EPEL repo
+  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+
+- name: add Webstatic PHP repo
+  yum: name=https://mirror.webtatic.com/yum/el7/webtatic-release.rpm state=present
+
+- name: update all yum packages
+  yum: name=* state=latest
+
+- name: install tools
+  yum: name={{ item }} state=present
+  with_items:
+    - MariaDB-client
+    - MariaDB-server
+    - MySQL-python
+    - curl-devel
+    - fail2ban
+    - git
+    - httpd-devel
+    - openssl-devel
+    - php56w
+    - php56w-common
+    - php56w-mysql
+    - php56w-opcache
+    - sendmail
+    - xz
+
+- name: install wp-cli
+  get_url: url=https://github.com/wp-cli/wp-cli/releases/download/v0.21.1/wp-cli-0.21.1.phar \
+           checksum=sha256:acd8a1f90610c9174158366f1c9016fe1d0f596311ca53e4d0c4d1c497c15f6a \
+           dest=/usr/local/bin/wp-cli
+
+- name: set permissions on wp-cli
+  file: path=/usr/local/bin/wp-cli mode=0755

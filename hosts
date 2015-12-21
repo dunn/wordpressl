@@ -1,0 +1,2 @@
+[centos]
+wp ansible_ssh_host=159.203.207.12
