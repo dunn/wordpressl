@@ -1,4 +1,8 @@
 ---
+- name: create backups dir
+  file: path=/www/backups/mysql state=directory \
+        mode=0700 owner={{ deploy_user }} group={{ deploy_group }}
+
 - name: create backup script
   template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700 owner={{ deploy_user }} group={{ deploy_group }}
 
