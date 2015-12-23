@@ -7,7 +7,7 @@
            dest=/www/install/wordpress-{{ WP_VERSION }}.tar.gz \
            checksum=sha1:{{ SHA1 }}
 
-- name: install WordPress
+- name: unpack WordPress
   unarchive: src=/www/install/wordpress-{{ WP_VERSION }}.tar.gz \
              dest=/www/ owner={{ deploy_user }} group={{ deploy_group }} copy=no
 
