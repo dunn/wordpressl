@@ -14,8 +14,4 @@
 - include: install.yml
   when: wp_content.stat.exists == False
 
-- name: enable pretty permalinks
-  copy: src=htaccess dest=/www/wordpress/.htaccess \
-        owner={{ deploy_user }} group={{ deploy_group }} mode=0600
-
 - include: plugins.yml
