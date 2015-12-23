@@ -5,6 +5,7 @@
 
   vars:
     hostname: "{{ lookup('env', 'SERVER') }}"
+    keyfile: "{{ lookup('env', 'IDENTITY') }}.pub"
 
     # After setup, root SSH access will be removed
     deploy_user: deploy
