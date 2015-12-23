@@ -1,10 +1,4 @@
 ---
-- name: create project directories
-  file: path={{ item }} state=directory owner={{ deploy_user }} group={{ deploy_group }}
-  with_items:
-    - /www
-    - /www/log
-
 - name: configure virtual hosts
   template: src=wp.conf.j2 dest=/etc/httpd/conf.d/wp.conf owner=root group=root
 

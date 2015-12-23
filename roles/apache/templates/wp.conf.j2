@@ -1,18 +1,18 @@
 <VirtualHost *:80>
   ServerName {{ hostname }}
   ServerAdmin {{ admin_email }}
-  DocumentRoot /www/wordpress/
+  DocumentRoot /var/www/wordpress/
 
   LogLevel warn
 
-  ErrorLog /www/log/error.log
-  CustomLog /www/log/access.log combined
+  ErrorLog /var/log/wordpress_error.log
+  CustomLog /var/log/wordpress_access.log combined
 
-  <Directory /www/wordpress/>
+  <Directory /var/www/wordpress/>
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted
-    
+
     <IfModule mod_rewrite.c>
       RewriteEngine On
       RewriteBase /

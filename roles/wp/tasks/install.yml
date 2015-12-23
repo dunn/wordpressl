@@ -1,27 +1,28 @@
 ---
 - name: create install directory
-  file: path=/www/install state=directory
+  file: path=/root/install state=directory
 
 - name: download WordPress
   get_url: url=https://wordpress.org/wordpress-{{ WP_VERSION }}.tar.gz \
-           dest=/www/install/wordpress-{{ WP_VERSION }}.tar.gz \
+           dest=/root/install/wordpress-{{ WP_VERSION }}.tar.gz \
            checksum=sha1:{{ SHA1 }}
 
 - name: unpack WordPress
-  unarchive: src=/www/install/wordpress-{{ WP_VERSION }}.tar.gz \
-             dest=/www/ owner={{ deploy_user }} group={{ deploy_group }} copy=no
+  unarchive: src=/root/install/wordpress-{{ WP_VERSION }}.tar.gz \
+             dest=/var/www/ owner={{ deploy_user }} group={{ deploy_group }} copy=no
 
-- stat: path=/www/wordpress/wp-config.php
+- stat: path=/var/www/wordpress/wp-config.php
   register: wp_config
 
 - name: configure WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/www/wordpress/ core config --dbname=wordpress --dbuser=wp --dbpass={{ wp_db_pass }}
+  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/wordpress core config \
+           --dbname=wordpress --dbuser=wp --dbpass={{ wp_db_pass }}
   when: wp_config.stat.exists == False
 
   # exits with 0 when already installed
 - name: install WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/www/wordpress/ core install \
+  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/wordpress core install \
            --title="{{ ansible_system }} is so good" --url="http://{{ hostname }}" \
            --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}
