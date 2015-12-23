@@ -8,21 +8,23 @@
            checksum=sha1:{{ SHA1 }}
 
 - name: unpack WordPress
-  unarchive: src=/root/install/wordpress-{{ WP_VERSION }}.tar.gz \
-             dest=/var/www/ owner={{ deploy_user }} group={{ deploy_group }} copy=no
+  unarchive: src=/root/install/wordpress-{{ WP_VERSION }}.tar.gz dest=/root/install/ copy=no
 
-- stat: path=/var/www/wordpress/wp-config.php
+- name: copy WordPress to /var/www/html
+  shell: cp -r /root/install/wordpress/* /var/www/html/
+
+- stat: path=/var/www/html/wp-config.php
   register: wp_config
 
 - name: configure WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/wordpress core config \
+  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/html core config \
            --dbname=wordpress --dbuser=wp --dbpass={{ wp_db_pass }}
   when: wp_config.stat.exists == False
 
   # exits with 0 when already installed
 - name: install WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/wordpress core install \
-           --title="{{ ansible_system }} is so good" --url="http://{{ hostname }}" \
+  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/html core install \
+           --title="WordPress is so good" --url="http://{{ hostname }}" \
            --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}

@@ -1,14 +1,14 @@
 <VirtualHost *:80>
   ServerName {{ hostname }}
   ServerAdmin {{ admin_email }}
-  DocumentRoot /var/www/wordpress/
+  DocumentRoot /var/www/html/
 
   LogLevel warn
 
-  ErrorLog /var/log/wordpress_error.log
-  CustomLog /var/log/wordpress_access.log combined
+  ErrorLog /var/log/httpd/wordpress_error.log
+  CustomLog /var/log/httpd/wordpress_access.log combined
 
-  <Directory /var/www/wordpress/>
+  <Directory /var/www/html/>
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted

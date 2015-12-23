@@ -30,7 +30,7 @@
               login_password={{ root_db_pass }} login_user=root
 
 - name: create MariaDB configuration
-  template: src=my.cnf.j2 dest=/root/.my.cnf
+  template: src=my.cnf.j2 dest=/root/.my.cnf mode=0600
 
 - name: restart MariaDB
   service: name=mariadb state=restarted enabled=yes

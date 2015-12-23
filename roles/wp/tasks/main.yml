@@ -1,18 +1,18 @@
 ---
 - name: copy existing database
   when: import_db != ""
-  copy: src={{ import_db }} dest=/root/import/import.sql
+  copy: src={{ import_db }} dest=/root/import.sql
 
 - name: import database
   when: import_db != ""
-  mysql_db: name=wordpress state=import target=/root/import/import.sql
+  mysql_db: name=wordpress state=import target=/root/import.sql
 
 - name: remove imported database
   when: import_db != ""
-  file: path=/root/import/import.sql state=absent
+  file: path=/root/import.sql state=absent
 
 - name: check for existing WordPress installation
-  stat: path=/var/www/wordpress/wp-content
+  stat: path=/var/www/html/wp-content
   register: wp_content
 
 - include: install.yml

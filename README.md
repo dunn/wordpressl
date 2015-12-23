@@ -11,6 +11,9 @@ If provisioning fails, the configuration is written to disk.  Delete
 it immediately if you don’t want to try again, since it will contain
 passwords in plain-text.
 
+After provisioning, reset the root password through Digital Ocean in
+order to regain root access and to restart the server under SELinux.
+
 ## Prerequisites
 
 - Ansible 2.x.x

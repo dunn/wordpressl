@@ -1,13 +1,11 @@
 ---
 - name: create backups dir
-  file: path=/home/deploy/backups/mysql state=directory \
-        mode=0700 owner={{ deploy_user }} group={{ deploy_group }}
+  file: path=/home/deploy/backups/db state=directory \
+        mode=0755 owner={{ deploy_user }} group={{ deploy_group }}
 
 - name: create backup script
-  template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700 \
-            owner={{ deploy_user }} group={{ deploy_group }}
+  template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700
 
 - name: run backups every day
-  cron: user={{ deploy_user }} hour="0" name="db backup" \
-        job="/usr/local/bin/wp-backup >> /var/log/wordpress_backup_error.log 2>&1" \
-        cron_file=ansible_db
+  cron: user=root hour="0" name="db backup" cron_file=ansible_db \
+        job="/usr/local/bin/wp-backup >> /var/log/wordpress_backup_error.log 2>&1"
