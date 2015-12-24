@@ -1,5 +1,5 @@
 #!/bin/sh
-day=$(date "+%u")
-mysqldump wordpress > /home/deploy/backups/db/wp"$day".sql
-xz -f /home/deploy/backups/db/wp"$day".sql
-chown {{ deploy_user }}:{{ deploy_group }} /home/deploy/backups/db/wp"$day".sql.xz
+DAY=$(date "+%u")
+mysqldump wordpress > /home/deploy/backups/db/wp"$DAY".sql
+xz -f /home/deploy/backups/db/wp"$DAY".sql
+chown {{ deploy_user }}:{{ deploy_group }} /home/deploy/backups/db/wp"$DAY".sql.xz
