@@ -8,4 +8,4 @@
 
 - name: run backups every day
   cron: user=root hour="0" name="db backup" cron_file=ansible_db \
-        job='/usr/local/bin/wp-backup 2>&1 | xargs -I {} echo "($(date +%Y-%m-%d-%H%M%S)) {}" >> /var/log/wordpress_backup.log'
+        job='/usr/local/bin/wp-backup >> /var/log/wordpress_backup.log 2>&1'

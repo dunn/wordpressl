@@ -1,4 +1,8 @@
 #!/bin/sh
+
+echo
+date '+%Y-%m-%d-%H%M%S'
+
 DAY=$(date "+%u")
 mysqldump wordpress > /home/deploy/backups/db/wp"$DAY".sql
 xz -f /home/deploy/backups/db/wp"$DAY".sql
