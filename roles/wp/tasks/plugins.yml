@@ -5,6 +5,5 @@
     - wordfence
 
 - name: autoupdate plugins
-  cron: user=root name="plugin update" hour="0" \
-        job="/usr/local/bin/wp-cli --path=/var/www/html plugin update --all >> /var/log/wordpress_update.log 2>&1" \
-        cron_file=ansible_plugins
+  cron: user=root name="plugin update" special_time=daily cron_file=ansible_plugins \
+        job="/usr/local/bin/wp-cli --path=/var/www/html plugin update --all >> /var/log/wordpress_update.log 2>&1"

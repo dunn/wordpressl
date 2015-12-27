@@ -1,6 +1,6 @@
 ---
 - name: automatically update yum packages
-  cron: name="yum update" hour="0" job="yum update >> /var/log/yum_update.log 2>&1" \
+  cron: name="yum update" special_time=daily job="yum update >> /var/log/yum_update.log 2>&1" \
         cron_file=ansible_update user=root
 
 - name: clear yum cache once a week

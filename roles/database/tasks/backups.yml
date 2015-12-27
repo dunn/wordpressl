@@ -7,5 +7,5 @@
   template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700
 
 - name: run backups every day
-  cron: user=root hour="0" name="db backup" cron_file=ansible_db \
+  cron: user=root special_time=daily name="db backup" cron_file=ansible_db \
         job='/usr/local/bin/wp-backup >> /var/log/wordpress_backup.log 2>&1'
