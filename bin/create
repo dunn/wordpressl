@@ -96,6 +96,7 @@ else
   echo
   echo -n "Specify path to DB dump to import (leave blank if none): "
   read -r -e IMPORT_DB
+  export IMPORT_DB
 
   write_savepoint > "config-$NOW.log"
   chmod 600 "config-$NOW.log"
