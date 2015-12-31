@@ -22,7 +22,6 @@ write_savepoint() {
 #!/bin/bash
 export EMAIL="$EMAIL"
 export IDENTITY="$IDENTITY"
-export IMPORT_DB="$IMPORT_DB"
 export ROOT_DB_PASS="$ROOT_DB_PASS"
 export SERVER="$SERVER"
 export WP_ADMIN_PASS="$WP_PASS"
@@ -92,11 +91,6 @@ else
   echo -n "Enter password for WordPress admin user: "
   read -r -s WP_ADMIN_PASS
   export WP_ADMIN_PASS
-
-  echo
-  echo -n "Specify path to DB dump to import (leave blank if none): "
-  read -r -e IMPORT_DB
-  export IMPORT_DB
 
   write_savepoint > "config-$NOW.log"
   chmod 600 "config-$NOW.log"
