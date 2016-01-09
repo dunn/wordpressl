@@ -30,9 +30,8 @@
     - xz
 
 - name: install wp-cli
-  get_url: url=https://github.com/wp-cli/wp-cli/releases/download/v0.21.1/wp-cli-0.21.1.phar \
-           checksum=sha256:acd8a1f90610c9174158366f1c9016fe1d0f596311ca53e4d0c4d1c497c15f6a \
-           dest=/usr/local/bin/wp-cli
+  get_url: url=https://github.com/wp-cli/wp-cli/releases/download/v{{ cli_version }}/wp-cli-{{ cli_version }}.phar \
+           checksum=sha256:{{ cli_sha }} dest=/usr/local/bin/wp-cli
 
 - name: set permissions on wp-cli
   file: path=/usr/local/bin/wp-cli mode=0755
