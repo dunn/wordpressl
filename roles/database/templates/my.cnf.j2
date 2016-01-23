@@ -1,3 +1,11 @@
 [client]
 user=root
 password={{ root_db_pass }}
+
+[mysqld]
+# InnoDB consumes too much memory by default on small droplets
+# see https://www.rackspace.com/knowledge_center/article/configuring-mysql-server-on-centos
+innodb_buffer_pool_size = 32M
+innodb_log_file_size = 8M
+innodb_thread_concurrency = 8
+innodb_file_per_table
