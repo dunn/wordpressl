@@ -20,12 +20,13 @@ run_cmd() {
 write_savepoint() {
   cat <<EOF
 #!/bin/bash
-export EMAIL="$EMAIL"
-export IDENTITY="$IDENTITY"
-export ROOT_DB_PASS="$ROOT_DB_PASS"
-export SERVER="$SERVER"
-export WP_ADMIN_PASS="$WP_PASS"
-export WP_DB_PASS="$WP_DB_PASS"
+export DEPLOY_PASS='$DEPLOY_PASS'
+export EMAIL='$EMAIL'
+export IDENTITY='$IDENTITY'
+export ROOT_DB_PASS='$ROOT_DB_PASS'
+export SERVER='$SERVER'
+export WP_ADMIN_PASS='$WP_PASS'
+export WP_DB_PASS='$WP_DB_PASS'
 EOF
 }
 
@@ -76,6 +77,11 @@ else
   echo -n "Enter an email address for the server and WP admin: "
   read -r EMAIL
   export EMAIL
+
+  echo
+  echo -n "Enter password for the 'deploy' user: "
+  read -r -s DEPLOY_PASS
+  export DEPLOY_PASS
 
   echo
   echo -n "Enter password for MariaDB root user: "

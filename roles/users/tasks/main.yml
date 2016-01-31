@@ -3,7 +3,8 @@
   group: name={{ deploy_user }} state=present
 
 - name: create deploy user
-  user: name={{ deploy_user }} state=present group={{ deploy_group }}
+  user: name={{ deploy_user }} password={{ deploy_pass }} \
+        state=present group={{ deploy_group }}
 
 - name: add key to deploy user\'s authorized_keys
   authorized_key: user={{ deploy_user }} key={{ lookup('file', keyfile) }}

@@ -10,6 +10,7 @@
     # After setup, root SSH access will be removed
     deploy_user: deploy
     deploy_group: "{{ deploy_user }}"
+    deploy_pass: "{{ lookup('env', 'DEPLOY_PASS') }}"
 
     root_db_pass: "{{ lookup('env', 'ROOT_DB_PASS') }}"
     wp_db_pass: "{{ lookup('env', 'WP_DB_PASS') }}"
