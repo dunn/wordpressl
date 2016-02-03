@@ -5,7 +5,7 @@
 - name: download WordPress
   get_url: url=https://wordpress.org/wordpress-{{ WP_VERSION }}.tar.gz \
            dest=/root/install/wordpress-{{ WP_VERSION }}.tar.gz \
-           checksum=sha1:{{ SHA1 }}
+           checksum=sha256:{{ WP_SHA }}
 
 - name: unpack WordPress
   unarchive: src=/root/install/wordpress-{{ WP_VERSION }}.tar.gz dest=/root/install/ copy=no
