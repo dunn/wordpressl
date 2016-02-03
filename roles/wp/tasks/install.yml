@@ -28,3 +28,6 @@
   command: /usr/local/bin/wp-cli --allow-root --path={{ project_dir }} core install \
            --title="WordPress is so good" --url="http://{{ hostname }}" \
            --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}
+
+- name: configure updater
+  lineinfile: dest={{ project_dir }}/wp-config.php line="define('FS_METHOD', 'direct');"

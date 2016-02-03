@@ -11,6 +11,3 @@
 
 - name: add key to deploy user\'s authorized_keys
   authorized_key: user={{ deploy_user }} key={{ lookup('file', keyfile) }}
-
-- file: path={{ project_dir }} state=directory \
-        owner={{ deploy_group }} group={{ deploy_group }} recurse=yes mode=2750
