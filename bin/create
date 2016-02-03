@@ -13,7 +13,6 @@ run_cmd() {
 
   if [ "$EXIT_STATUS" != "0" ]; then
     echo "$(tput setaf 124)Failed ($EXIT_STATUS):$(tput sgr0) $cmd"
-    exit "$EXIT_STATUS"
   fi
 }
 
@@ -80,15 +79,13 @@ else
   export EMAIL
 
   echo
-  echo -n "Enter password for the root user: "
+  echo -n "Enter crypted password for the root user: "
   read -r -s ROOT_PASS
-  ROOT_PASS=$(echo "$ROOT_PASS" | openssl dgst -sha512)
   export ROOT_PASS
 
   echo
-  echo -n "Enter password for the 'deploy' user: "
+  echo -n "Enter crypted password for the 'deploy' user: "
   read -r -s DEPLOY_PASS
-  DEPLOY_PASS=$(echo "$DEPLOY_PASS" | openssl dgst -sha512)
   export DEPLOY_PASS
 
   echo
