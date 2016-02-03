@@ -1,6 +1,15 @@
 ---
-- name: create deploy group
-  group: name={{ deploy_user }} state=present
+- name: set root password
+  user: name=root password={{ root_pass }}
+
+- name: create {{ deploy_group }} group
+  group: name={{ deploy_group }} state=present
+
+- name: create {{ deploy_group }} user
+  user: name={{ deploy_group }} state=present group={{ deploy_group }}
+
+- file: path=/var/www state=directory \
+        owner={{ deploy_group }} group={{ deploy_group }} recurse=yes mode=2750
 
 - name: create deploy user
   user: name={{ deploy_user }} password={{ deploy_pass }} \

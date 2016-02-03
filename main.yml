@@ -7,9 +7,11 @@
     hostname: "{{ lookup('env', 'SERVER') }}"
     keyfile: "{{ lookup('env', 'IDENTITY') }}.pub"
 
+    root_pass: "{{ lookup('env', 'ROOT_PASS') }}"
+
     # After setup, root SSH access will be removed
     deploy_user: deploy
-    deploy_group: "{{ deploy_user }}"
+    deploy_group: apache
     deploy_pass: "{{ lookup('env', 'DEPLOY_PASS') }}"
 
     root_db_pass: "{{ lookup('env', 'ROOT_DB_PASS') }}"
@@ -17,10 +19,12 @@
 
     wp_admin_pass: "{{ lookup('env', 'WP_ADMIN_PASS') }}"
     admin_email: "{{ lookup('env', 'EMAIL') }}"
+
+    become_user: deploy
   roles:
     - { role: tools }
     - { role: users }
     - { role: database }
     - { role: apache }
-    - { role: wp }
+    - { role: wp, become: yes }
     - { role: cleanup }

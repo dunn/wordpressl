@@ -9,12 +9,12 @@ run_cmd() {
   echo "$(tput bold)==> $*$(tput sgr0)"
   eval "$cmd"
 
-  exit_code=$?
+  export EXIT_STATUS=$?
 
-  if [ "$exit_code" != "0" ]; then
-    echo "$(tput setaf 124)Failed ($exit_code):$(tput sgr0) $cmd"
+  if [ "$EXIT_STATUS" != "0" ]; then
+    echo "$(tput setaf 124)Failed ($EXIT_STATUS):$(tput sgr0) $cmd"
+    exit "$EXIT_STATUS"
   fi
-  export EXIT_STATUS="$exit_code"
 }
 
 write_savepoint() {
@@ -24,6 +24,7 @@ export DEPLOY_PASS='$DEPLOY_PASS'
 export EMAIL='$EMAIL'
 export IDENTITY='$IDENTITY'
 export ROOT_DB_PASS='$ROOT_DB_PASS'
+export ROOT_PASS='$ROOT_PASS'
 export SERVER='$SERVER'
 export WP_ADMIN_PASS='$WP_PASS'
 export WP_DB_PASS='$WP_DB_PASS'
@@ -79,8 +80,15 @@ else
   export EMAIL
 
   echo
+  echo -n "Enter password for the root user: "
+  read -r -s ROOT_PASS
+  ROOT_PASS=$(echo "$ROOT_PASS" | openssl dgst -sha512)
+  export ROOT_PASS
+
+  echo
   echo -n "Enter password for the 'deploy' user: "
   read -r -s DEPLOY_PASS
+  DEPLOY_PASS=$(echo "$DEPLOY_PASS" | openssl dgst -sha512)
   export DEPLOY_PASS
 
   echo
@@ -97,6 +105,7 @@ else
   echo -n "Enter password for WordPress admin user: "
   read -r -s WP_ADMIN_PASS
   export WP_ADMIN_PASS
+  echo
 
   write_savepoint > "config-$NOW.log"
   chmod 600 "config-$NOW.log"
