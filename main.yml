@@ -7,8 +7,9 @@
     hostname: "{{ lookup('env', 'SERVER') }}"
     keyfile: "{{ lookup('env', 'IDENTITY') }}.pub"
 
-    root_pass: "{{ lookup('env', 'ROOT_PASS') }}"
+    project_dir: /var/www/html
 
+    root_pass: "{{ lookup('env', 'ROOT_PASS') }}"
     # After setup, root SSH access will be removed
     deploy_user: deploy
     deploy_group: apache

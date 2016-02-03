@@ -1,6 +1,6 @@
 ---
 - name: check for existing WordPress installation
-  stat: path=/var/www/html/wp-content
+  stat: path={{ project_dir }}/wp-content
   register: wp_content
 
 - include: install.yml

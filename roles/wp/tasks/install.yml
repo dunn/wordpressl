@@ -10,21 +10,21 @@
 - name: unpack WordPress
   unarchive: src=/root/install/wordpress-{{ WP_VERSION }}.tar.gz dest=/root/install/ copy=no
 
-- name: copy WordPress to /var/www/html
-  shell: cp -r /root/install/wordpress/* /var/www/html/
+- name: copy WordPress to {{ project_dir }}
+  shell: cp -r /root/install/wordpress/* {{ project_dir }}/
 
-- stat: path=/var/www/html/wp-config.php
+- stat: path={{ project_dir }}/wp-config.php
   register: wp_config
 
 - name: configure WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/html core config \
+  command: /usr/local/bin/wp-cli --allow-root --path={{ project_dir }} core config \
            --dbname=wordpress --dbuser=wp --dbpass={{ wp_db_pass }}
   when: wp_config.stat.exists == False
 
   # exits with 0 when already installed
 - name: install WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --allow-root --path=/var/www/html core install \
+  command: /usr/local/bin/wp-cli --allow-root --path={{ project_dir }} core install \
            --title="WordPress is so good" --url="http://{{ hostname }}" \
            --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}

@@ -1,9 +1,9 @@
 ---
 - name: install plugins
-  command: /usr/local/bin/wp-cli --path=/var/www/html plugin install {{ item }} --activate
+  command: /usr/local/bin/wp-cli --path={{ project_dir }} plugin install {{ item }} --activate
   with_items:
     - wordfence
 
 - name: autoupdate plugins
   cron: user=root name="plugin update" special_time=daily cron_file=ansible_plugins \
-        job="/usr/local/bin/wp-cli --path=/var/www/html plugin update --all >> /var/log/wordpress_update.log 2>&1"
+        job="/usr/local/bin/wp-cli --path={{ project_dir }} plugin update --all >> /var/log/wordpress_update.log 2>&1"
