@@ -26,7 +26,7 @@ export IDENTITY='$IDENTITY'
 export ROOT_DB_PASS='$ROOT_DB_PASS'
 export ROOT_PASS='$ROOT_PASS'
 export SERVER='$SERVER'
-export WP_ADMIN_PASS='$WP_PASS'
+export WP_ADMIN_PASS='$WP_ADMIN_PASS'
 export WP_DB_PASS='$WP_DB_PASS'
 EOF
 }
@@ -107,19 +107,19 @@ else
   export WP_ADMIN_PASS
   echo
 
-  write_savepoint > "config-$NOW.log"
-  chmod 600 "config-$NOW.log"
+  write_savepoint > "config-$NOW.cfg"
+  chmod 600 "config-$NOW.cfg"
 fi
 
 write_hosts > hosts
 write_conf > ansible.cfg
 run_cmd "ansible-playbook main.yml -vv -u root"
 if [ "$EXIT_STATUS" == "0" ]; then
-  rm -f config-*.log
+  rm -f config-*.cfg
   echo "Provisioning complete."
 else
   echo
   echo "$(tput bold)==> Configuration saved to $(ls config-* | tr -d '\n')$(tput sgr0)"
-  echo 'Re-run with `bin/create'" config-$NOW.log"'`'", or delete it NOW."
+  echo 'Re-run with `bin/create'" $(ls config-* | tr -d '\n')"'`'", or delete it NOW."
   echo
 fi
