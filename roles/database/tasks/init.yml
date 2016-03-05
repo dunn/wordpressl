@@ -30,7 +30,19 @@
               login_password={{ root_db_pass }} login_user=root
 
 - name: create MariaDB configuration
-  template: src=my.cnf.j2 dest=/root/.my.cnf mode=0600
+  template:
+    src: wp.cnf.j2
+    dest: /etc/my.cnf.d/wp.cnf
+    mode: 0644
+    owner: mysql
+    group: mysql
+
+- name: create MariaDB log directory
+  file:
+    path: /var/log/mysql
+    owner: mysql
+    group: mysql
+    state: directory
 
 - name: restart MariaDB
   service: name=mariadb state=restarted enabled=yes
