@@ -74,7 +74,7 @@ else
   IDENTITY=${IDENTITY:-"$HOME/.ssh/id_rsa"}
   export IDENTITY
 
-  echo -n "Enter an email address for the server and WP admin: "
+  echo -n "Enter an email address for the WP admin: "
   read -r EMAIL
   export EMAIL
 
