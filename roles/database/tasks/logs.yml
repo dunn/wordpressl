@@ -1,0 +1,5 @@
+---
+- name: install MariaDB log rotation config
+  template:
+    src: wp-mariadb-rotate.conf.j2
+    dest: /etc/logrotate.d/wp-mariadb.conf

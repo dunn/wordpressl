@@ -10,3 +10,4 @@
   when: my_cnf.stat.exists == False
 
 - include: backups.yml
+- include: logs.yml
