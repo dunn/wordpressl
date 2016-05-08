@@ -1,0 +1,11 @@
+---
+- name: restart services (memory leaks)
+  cron:
+    name: "{{ item }}.restart"
+    special_time: weekly
+    user: root
+    cron_file: "{{ item }}.restart"
+    job: "/bin/systemctl restart {{ item }}.service"
+  with_items:
+    - httpd
+    - mariadb
