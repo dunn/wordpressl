@@ -19,7 +19,7 @@
 - name: configure WordPress
   no_log: True
   command: /usr/local/bin/wp-cli --allow-root --path={{ project_dir }} core config \
-           --dbname=wordpress --dbuser=wp --dbpass={{ wp_db_pass }}
+           --dbname=wordpress --dbuser=wordpress --dbpass={{ wp_db_pass }}
   when: wp_config.stat.exists == False
 
   # exits with 0 when already installed
