@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# http://www.lanexa.net/2011/08/how-to-change-the-wordpress-site-url-using-mysql-command-line/
+mysql wordpress -u wordpress -p <<-EOS
+update wp_options set option_value = "$1" where option_name = 'siteurl';
+update wp_options set option_value = "$1" where option_name = 'home';
+EOS
