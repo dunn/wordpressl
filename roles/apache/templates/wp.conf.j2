@@ -19,6 +19,9 @@
       RewriteCond %{REQUEST_FILENAME} !-f
       RewriteCond %{REQUEST_FILENAME} !-d
       RewriteRule . /index.php [L]
+
+      RewriteCond %{HTTP_HOST} ^{{ hostname }} [NC]
+      RewriteRule ^(.*)$ http://www.{{ hostname }}/$1 [L,R=301]
     </IfModule>
   </Directory>
 </VirtualHost>
