@@ -1,0 +1,19 @@
+---
+- name: restart fail2ban
+  service: name=fail2ban state=restarted enabled=yes
+
+- name: install xml-rpc fail2ban filter
+  copy:
+    src: apache-xmlrpc.filter
+    dest: /etc/fail2ban/filter.d/apache-xmlrpc.conf
+    mode: 664
+    owner: apache
+    group: apache
+
+- name: install xml-rpc fail2ban jail
+  copy:
+    src: apache-xmlrpc.jail
+    dest: /etc/fail2ban/jail.local
+    mode: 664
+    owner: apache
+    group: apache

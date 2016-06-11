@@ -8,9 +8,6 @@
 
 - selinux: policy=targeted state=enforcing
 
-- name: restart fail2ban
-  service: name=fail2ban state=restarted enabled=yes
-
 - name: update ssh config
   copy: src=sshd_config dest=/etc/ssh/sshd_config \
         owner=root group=root mode=0400

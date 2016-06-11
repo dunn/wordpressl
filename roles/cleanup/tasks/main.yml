@@ -1,4 +1,2 @@
 ---
-- include: security.yml
 - include: updates.yml
-- include: restarts.yml

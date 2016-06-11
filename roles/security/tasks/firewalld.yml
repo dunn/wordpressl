@@ -1,0 +1,9 @@
+---
+- name: restart firewalld
+  service: name=firewalld state=restarted enabled=yes
+
+- name: add http to firewalld allowed protocols
+  command: firewall-cmd --add-service=http --permanent --zone=public
+
+- name: reload firewalld
+  command: firewall-cmd --reload
