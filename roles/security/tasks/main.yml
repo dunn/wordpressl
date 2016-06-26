@@ -15,3 +15,5 @@
   - restart sshd
 
 - meta: flush_handlers
+- include: fail2ban.yml
+- include: firewalld.yml
