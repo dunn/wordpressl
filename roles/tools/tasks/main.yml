@@ -21,6 +21,7 @@
     - fail2ban
     - git
     - httpd-devel
+    - mod_ssl
     - openssl-devel
     - php56w
     - php56w-common
