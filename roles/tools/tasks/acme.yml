@@ -1,0 +1,6 @@
+---
+- name: clone acme-tiny repo
+  git:
+    repo: https://github.com/diafygi/acme-tiny.git
+    dest: /usr/local/acme-tiny
+    version: 7a5a2558c8d6e5ab2a59b9fec9633d9e63127971

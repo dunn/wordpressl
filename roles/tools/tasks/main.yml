@@ -27,6 +27,7 @@
     - php56w-common
     - php56w-mysql
     - php56w-opcache
+    - python34-devel
     - sendmail
     - xz
 
@@ -40,3 +41,5 @@
   file:
     path: /usr/local/bin/wp-cli
     mode: 0755
+
+- include: acme.yml
