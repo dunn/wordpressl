@@ -28,4 +28,5 @@
     - { role: database }
     - { role: apache }
     - { role: wp, become: yes }
+    - { role: security }
     - { role: cleanup }
