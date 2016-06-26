@@ -27,6 +27,6 @@
     - { role: users }
     - { role: database }
     - { role: apache }
-    - { role: wp, become: yes }
+    - { role: wp }
     - { role: security }
     - { role: cleanup }
