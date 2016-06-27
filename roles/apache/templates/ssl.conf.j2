@@ -25,8 +25,3 @@ SSLSessionCacheTimeout  300
 #   Manual for more details.
 SSLRandomSeed startup file:/dev/urandom 1024
 SSLRandomSeed connect builtin
-
-# https://www.sslshopper.com/apache-redirect-http-to-https.html
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule (.*) https://{{ hostname }}/%$1 [R,L]
