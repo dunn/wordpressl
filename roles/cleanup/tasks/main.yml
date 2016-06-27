@@ -1,2 +1,9 @@
 ---
+- name: set directory permissions of {{ project_dir }}
+  file: path={{ project_dir }} state=directory \
+        owner={{ deploy_user }} group={{ deploy_group }} recurse=yes mode=2770
+
+- name: set file permissions of {{ project_dir }}
+  command: find {{ project_dir }} -type f -exec chmod 664 {} \;
+
 - include: updates.yml
