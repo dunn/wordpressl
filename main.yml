@@ -1,5 +1,5 @@
 ---
-- name: Set up WordPress on a DigitalOcean CentOS VM
+- name: Set up WordPress on a CentOS VM
   remote_user: root
   hosts: all
 
