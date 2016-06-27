@@ -29,6 +29,11 @@ modification may be necessary for use elsewhere.
   server, or the domain name.  Keep in mind that it will be used for
   the Apache virtual host as well as the WordPress configuration
 
+    If you use an IP address, comment out the `- include: acme.yml`
+    line in `roles/apache/tasks/main.yml`.  Otherwise a SSL/TLS
+    certificate will be issued for the IP address rather than the
+    domain name.  You’ll have to run the SSL/TLS tasks manually.
+
     If you use an IP address and later point a domain name at your
     server, you’ll need to update the WordPress configuration, since
     WordPress does some redirection of its own and will only function

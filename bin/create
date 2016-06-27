@@ -64,7 +64,7 @@ else
   ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
   export ANSIBLE_CONFIG
 
-  echo -n "Set the hostname (IP or preferably domain): "
+  echo -n "Enter the domain name: "
   read -r SERVER
   export SERVER
 
