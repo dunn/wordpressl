@@ -1,5 +1,5 @@
-# MariaDB 10.1 CentOS repository list - created 2015-12-20 19:55 UTC
-# http://mariadb.org/mariadb/repositories/
+# MariaDB 10.1 CentOS repository list - created 2016-06-27 02:01 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
 [mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/10.1/centos7-amd64
