@@ -16,12 +16,12 @@
   SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+AESGCM EECDH EDH+AESGCM EDH+aRSA HIGH !MEDIUM !LOW !aNULL !eNULL !LOW !RC4 !MD5 !EXP !PSK !SRP !DSS"
   # Prevent CRIME/BREACH compression attacks
   SSLCompression Off
-  # Commit to HTTPS only traffic for at least 180 days
-  Header add Strict-Transport-Security "max-age=15552000"
 
   # Header security (https://letsecure.me/secure-web-deployment-with-lets-encrypt-and-nginx/)
   Header always set X-Content-Type-Options nosniff
   Header always set X-Frame-Options SAMEORIGIN
+  # Commit to HTTPS only traffic for at least 180 days
+  Header always set Strict-Transport-Security "max-age=15552000"
   # https://github.com/h5bp/server-configs-apache/blob/e603554f559b1be4861553239e22a7844075bedc/src/security/x-xss-protection.conf
   Header always set X-XSS-Protection "1; mode=block"
 
