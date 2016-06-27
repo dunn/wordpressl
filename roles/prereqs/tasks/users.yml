@@ -1,0 +1,34 @@
+---
+# Passwords must be pre-crypted: http://docs.ansible.com/ansible/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+#
+# http://serverfault.com/a/330072
+- name: hash root password
+  shell: python3 -c 'import crypt; print(crypt.crypt("{{ root_pass }}", crypt.mksalt(crypt.METHOD_SHA512)))' \
+         | tr -d '\n'
+  no_log: True
+  register: root_crypted
+
+- name: set root password
+  user: name=root password='{{ root_crypted.stdout }}'
+
+- name: create {{ deploy_group }} group
+  group: name={{ deploy_group }} state=present
+
+- name: create apache user
+  user:
+    name: apache
+    state: present
+    group: "{{ deploy_group }}"
+
+- name: hash {{ deploy_user }} password
+  shell: python3 -c 'import crypt; print(crypt.crypt("{{ deploy_pass }}", crypt.mksalt(crypt.METHOD_SHA512)))' \
+         | tr -d '\n'
+  no_log: True
+  register: deploy_crypted
+
+- name: create deploy user
+  user: name={{ deploy_user }} password='{{ deploy_crypted.stdout }}' \
+        state=present group={{ deploy_group }}
+
+- name: add key to deploy user\'s authorized_keys
+  authorized_key: user={{ deploy_user }} key={{ lookup('file', keyfile) }}

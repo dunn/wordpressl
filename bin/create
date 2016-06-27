@@ -64,12 +64,11 @@ else
   ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
   export ANSIBLE_CONFIG
 
-  echo -n "Set SERVER: "
+  echo -n "Set the hostname (IP or preferably domain): "
   read -r SERVER
-  echo "Setting SERVER to '$SERVER'"
   export SERVER
 
-  echo -n "Specify path to identity file (default ~/.ssh/id_rsa): "
+  echo -n "Specify path to identity file (defaults to ~/.ssh/id_rsa): "
   read -r -e IDENTITY
   IDENTITY=${IDENTITY:-"$HOME/.ssh/id_rsa"}
   export IDENTITY
@@ -79,12 +78,12 @@ else
   export EMAIL
 
   echo
-  echo -n "Enter crypted password for the root user: "
+  echo -n "Enter password for the root user: "
   read -r -s ROOT_PASS
   export ROOT_PASS
 
   echo
-  echo -n "Enter crypted password for the 'deploy' user: "
+  echo -n "Enter password for the 'deploy' user: "
   read -r -s DEPLOY_PASS
   export DEPLOY_PASS
 

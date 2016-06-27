@@ -1,0 +1,87 @@
+---
+- name: clone acme-tiny repo
+  git:
+    repo: https://github.com/diafygi/acme-tiny.git
+    dest: /home/{{ deploy_user }}/acme-tiny
+    version: 7a5a2558c8d6e5ab2a59b9fec9633d9e63127971
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: create challenge directory
+  file:
+    path: "{{ project_dir }}/.well-known/acme-challenge"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+  become: true
+  become_user: "{{ deploy_user }}"
+
+# https://letsencrypt.org/how-it-works/
+# https://github.com/diafygi/acme-tiny#how-to-use-this-script
+# https://github.com/diafygi/letsencrypt-nosudo#how-to-use-the-signing-script
+- name: create TLS user private key
+  shell: openssl genrsa 4096 > /home/{{ deploy_user }}/acme.key
+  args:
+    creates: /home/{{ deploy_user }}/acme.key
+  become: true
+  become_user: "{{ deploy_user }}"
+
+# - name: create TLS user public key
+#   shell: openssl rsa -in /home/{{ deploy_user }}/acme.key -pubout > /home/{{ deploy_user }}/acme.pub
+#   creates: /home/{{ deploy_user }}/acme.pub
+
+- name: create TLS domain private key
+  shell: openssl genrsa 4096 > /home/{{ deploy_user }}/{{ hostname }}.key
+  args:
+    creates: /home/{{ deploy_user }}/{{ hostname }}.key
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: copy default OpenSSL config
+  copy:
+    remote_src: yes
+    src: /etc/pki/tls/openssl.cnf
+    dest: /home/{{ deploy_user }}/{{ hostname }}.cnf
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: add DNS info to local config
+  shell: printf "[SAN]\nsubjectAltName=DNS:{{ hostname }},DNS:www.{{ hostname }}" >> /home/{{ deploy_user }}/{{ hostname }}.cnf
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: create Certificate Signing Request
+  shell: 'openssl req -new -sha256 -key /home/{{ deploy_user }}/{{ hostname }}.key -subj "/" -reqexts SAN -config /home/{{ deploy_user }}/{{ hostname }}.cnf > /home/{{ deploy_user }}/{{ hostname }}.csr'
+  args:
+    creates: /home/{{ deploy_user }}/{{ hostname }}.csr
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: get certificate from Let’s Encrypt
+  shell: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
+         --account-key /home/{{ deploy_user }}/acme.key \
+         --csr /home/{{ deploy_user }}/{{ hostname }}.csr \
+         --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
+         > /home/{{ deploy_user }}/certs/{{ hostname }}.crt
+  args:
+    creates: /home/{{ deploy_user }}/certs/{{ hostname }}.crt
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: download Let’s Encrypt X3 certificate
+  get_url:
+    url: https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem
+    checksum: sha256:e446c5e9dbef9d09ac9f7027c034602492437a05ff6c40011d7235fca639c79a
+    dest: /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
+
+- name: set up certificate renewal
+  cron:
+    name: "ACME renewal"
+    special_time: monthly
+    job: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
+         --account-key /home/{{ deploy_user }}/acme.key \
+         --csr /home/{{ deploy_user }}/{{ hostname }}.csr \
+         --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
+         > /home/{{ deploy_user }}/certs/{{ hostname }}.crt 2>> /var/log/acme_error.log
+    cron_file: acme_renewal
+    user: "{{ deploy_user }}"

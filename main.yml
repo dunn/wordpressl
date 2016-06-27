@@ -23,10 +23,9 @@
 
     become_user: deploy
   roles:
-    - { role: tools }
-    - { role: users }
+    - { role: prereqs }
     - { role: database }
     - { role: apache }
-    - { role: wp }
-    - { role: security }
+    - { role: wordpress, become: true, become_user: "{{ deploy_user }}" }
     - { role: cleanup }
+    - { role: security }

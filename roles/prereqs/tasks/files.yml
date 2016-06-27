@@ -1,0 +1,14 @@
+---
+- name: create WordPress root
+  file:
+    path: "{{ project_dir }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+
+- name: create {{ deploy_user }} certs directory
+  file:
+    path: /home/{{ deploy_user }}/certs
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"

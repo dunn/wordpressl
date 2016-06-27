@@ -1,9 +1,21 @@
 ---
+- name: remove default apache configs
+  file: path=/etc/httpd/conf.d/{{ item }}.conf state=absent
+  with_items:
+    - ssl
+    - userdir
+    - welcome
+
+- name: restart apache
+  service: name=httpd state=restarted enabled=yes
+
+- include: acme.yml
+
 - name: configure virtual hosts
   template: src=wp.conf.j2 dest=/etc/httpd/conf.d/wp.conf
 
-- name: remove default apache site
-  file: path=/etc/httpd/conf.d/welcome.conf state=absent
+- name: install custom SSL config
+  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
 
 - name: restart apache
   service: name=httpd state=restarted enabled=yes

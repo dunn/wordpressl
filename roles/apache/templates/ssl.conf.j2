@@ -1,0 +1,32 @@
+LoadModule ssl_module modules/mod_ssl.so
+
+Listen 443 https
+
+# TODO: encrypt private keys
+# SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
+
+# (From mod_ssl ssl.conf)
+#   Inter-Process Session Cache:
+#   Configure the SSL Session Cache: First the mechanism
+#   to use and second the expiring timeout (in seconds).
+SSLSessionCache         shmcb:/run/httpd/sslcache(512000)
+SSLSessionCacheTimeout  300
+
+# (From mod_ssl ssl.conf; size bumped to 1024)
+#   Pseudo Random Number Generator (PRNG):
+#   Configure one or more sources to seed the PRNG of the
+#   SSL library. The seed data should be of good random quality.
+#   WARNING! On some platforms /dev/random blocks if not enough entropy
+#   is available. This means you then cannot use the /dev/random device
+#   because it would lead to very long connection times (as long as
+#   it requires to make more entropy available). But usually those
+#   platforms additionally provide a /dev/urandom device which doesn't
+#   block. So, if available, use this one instead. Read the mod_ssl User
+#   Manual for more details.
+SSLRandomSeed startup file:/dev/urandom 1024
+SSLRandomSeed connect builtin
+
+# https://www.sslshopper.com/apache-redirect-http-to-https.html
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://{{ hostname }}/%$1 [R,L]
