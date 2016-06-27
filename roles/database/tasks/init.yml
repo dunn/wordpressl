@@ -6,13 +6,14 @@
   no_log: True
   command: mysql -u root --password={{ root_db_pass }} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 
-# Can change to hosts_all=yes in 2.1
+# This task and the next two are the same ones performed when you run
+# `mysql_secure_installation`
 - name: remove anonymous roles
-  mysql_user: name='' host=localhost state=absent login_password={{ root_db_pass }}
-- name: remove anonymous roles
-  mysql_user: name='' host=127.0.01 state=absent login_password={{ root_db_pass }}
-- name: remove anonymous roles
-  mysql_user: name='' host="::1" state=absent login_password={{ root_db_pass }}
+  mysql_user:
+    name: ''
+    hosts_all: yes
+    state: absent
+    login_password: "{{ root_db_pass }}"
 
 - name: remove test database
   mysql_db: name=test state=present login_password={{ root_db_pass }} login_user=root

@@ -13,4 +13,4 @@ passwords in plain-text.
 
 ## Prerequisites
 
-- Ansible 2.x.x
+- Ansible 2.1.x
