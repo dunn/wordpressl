@@ -30,5 +30,5 @@
   user: name={{ deploy_user }} password='{{ deploy_crypted.stdout }}' \
         state=present group={{ deploy_group }}
 
-- name: add key to deploy user\'s authorized_keys
+- name: add key to deploy user’s authorized_keys
   authorized_key: user={{ deploy_user }} key={{ lookup('file', keyfile) }}

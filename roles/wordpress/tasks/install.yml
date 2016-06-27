@@ -34,5 +34,7 @@
            --title="WordPress is so good" --url="https://www.{{ hostname }}" \
            --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}
 
+# This allows Apache to write files directly to the system, so updates
+# can be performed through the WordPress web interface
 - name: configure updater
   lineinfile: dest={{ project_dir }}/wp-config.php line="define('FS_METHOD', 'direct');"

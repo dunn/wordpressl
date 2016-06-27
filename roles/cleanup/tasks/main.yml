@@ -1,4 +1,7 @@
 ---
+# Files and directories here need to be group-writable since it's the
+# 'apache' user that does the writes when you run update from the
+# WordPress web interface
 - name: set directory permissions of {{ project_dir }}
   file: path={{ project_dir }} state=directory \
         owner={{ deploy_user }} group={{ deploy_group }} recurse=yes mode=2770

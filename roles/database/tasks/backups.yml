@@ -1,4 +1,5 @@
 ---
+# TODO: automate copying these off the server to another location
 - name: create backups dir
   file: path=/home/deploy/backups/db state=directory \
         mode=0755 owner={{ deploy_user }} group={{ deploy_group }}
