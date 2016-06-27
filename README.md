@@ -1,15 +1,23 @@
 # Ansible playbook for WordPress
 
+This is a playbook for setting up a stock WordPress installation with
+SSL/TLS support thanks to [Let’s Encrypt](https://letsencrypt.org/).
+
 This playbook was written for CentOS VMs from DigitalOcean, so some
 modification may be necessary for use elsewhere.
 
-The Ansible invocation is performed by the `bin/create` wrapper
-script.  Running that will prompt you for the hostname, SSH key, and
-passwords which are passed to Ansible.
+## Basic use
 
-If provisioning fails, the configuration is written to disk.  Delete
-it immediately if you don’t want to try again, since it will contain
-passwords in plain-text.
+1. Create a CentOS virtual server (untested on other OSs) on
+   DigitalOcean or the provider of your choice (note that it’s assumed
+   you can SSH in as root initially).
+
+2. Run `bin/create`.  It will prompt you for the hostname, SSH key,
+   and passwords which are passed to Ansible.
+
+3. If provisioning fails, the configuration is written to disk.
+   Delete it immediately if you don’t want to try again, since it will
+   contain passwords in plain-text.
 
 ## Prerequisites
 
