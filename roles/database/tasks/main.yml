@@ -3,7 +3,7 @@
   service: name=mariadb state=restarted enabled=yes
 
 - name: check for existing MariaDB configuration
-  stat: path=/etc/my.cnf.d/wp.cnf
+  stat: path=/var/log/mysql
   register: my_cnf
 
 - include: init.yml

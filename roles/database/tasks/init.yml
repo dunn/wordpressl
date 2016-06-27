@@ -2,6 +2,14 @@
 - name: set MariaDB root password
   mysql_user: name=root password={{ root_db_pass }}
 
+- name: create MariaDB configuration
+  template:
+    src: wp.cnf.j2
+    dest: /etc/my.cnf.d/wp.cnf
+    mode: 0644
+    owner: mysql
+    group: mysql
+
 - name: disable remote root login
   no_log: True
   command: mysql -u root --password={{ root_db_pass }} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
@@ -29,14 +37,6 @@
 - name: create wordpress role
   mysql_user: name=wordpress password={{ wp_db_pass }} priv="wordpress.*:ALL" state=present \
               login_password={{ root_db_pass }} login_user=root
-
-- name: create MariaDB configuration
-  template:
-    src: wp.cnf.j2
-    dest: /etc/my.cnf.d/wp.cnf
-    mode: 0644
-    owner: mysql
-    group: mysql
 
 - name: create MariaDB log directory
   file:
