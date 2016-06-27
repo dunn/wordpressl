@@ -19,7 +19,7 @@
 - name: remove anonymous roles
   mysql_user:
     name: ''
-    hosts_all: yes
+    host_all: yes
     state: absent
     login_password: "{{ root_db_pass }}"
 
