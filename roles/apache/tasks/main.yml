@@ -1,4 +1,13 @@
 ---
+- name: create project directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+  with_items:
+    - "{{ project_dir }}"
+
 - name: remove default apache configs
   file: path=/etc/httpd/conf.d/{{ item }}.conf state=absent
   with_items:

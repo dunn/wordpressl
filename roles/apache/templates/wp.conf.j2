@@ -26,8 +26,8 @@
   # https://github.com/h5bp/server-configs-apache/blob/e603554f559b1be4861553239e22a7844075bedc/src/security/x-xss-protection.conf
   Header always set X-XSS-Protection "1; mode=block"
 
-  SSLCertificateFile /home/{{ deploy_user }}/certs/{{ hostname }}.crt
-  SSLCertificateKeyFile /home/{{ deploy_user }}/{{ hostname }}.key
+  SSLCertificateFile /etc/ssl/certs/{{ hostname }}.crt
+  SSLCertificateKeyFile /etc/ssl/certs/{{ hostname }}.key
   SSLCertificateChainFile /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
   SSLCACertificateFile /etc/ssl/certs/ca-bundle.crt
 

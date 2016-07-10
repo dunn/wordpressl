@@ -8,62 +8,71 @@
   become: true
   become_user: "{{ deploy_user }}"
 
-- name: create challenge directory
+- name: create ACME directories
   file:
-    path: "{{ project_dir }}/.well-known/acme-challenge"
+    path: "{{ item }}"
     state: directory
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
-  become: true
-  become_user: "{{ deploy_user }}"
+  with_items:
+    - "{{ project_dir }}/.well-known/acme-challenge"
+    - /home/{{ deploy_user }}/ssl
 
 # https://letsencrypt.org/how-it-works/
 # https://github.com/diafygi/acme-tiny#how-to-use-this-script
 # https://github.com/diafygi/letsencrypt-nosudo#how-to-use-the-signing-script
 - name: create TLS user private key
-  shell: openssl genrsa 4096 > /home/{{ deploy_user }}/acme.key
+  shell: openssl genrsa 4096 > /home/{{ deploy_user }}/ssl/acme.key
   args:
-    creates: /home/{{ deploy_user }}/acme.key
+    creates: /home/{{ deploy_user }}/ssl/acme.key
   become: true
   become_user: "{{ deploy_user }}"
 
 - name: create TLS domain private key
-  shell: openssl genrsa 4096 > /home/{{ deploy_user }}/{{ hostname }}.key
+  shell: openssl genrsa 4096 > /etc/ssl/certs/{{ hostname }}.key
   args:
-    creates: /home/{{ deploy_user }}/{{ hostname }}.key
-  become: true
-  become_user: "{{ deploy_user }}"
+    creates: /etc/ssl/certs/{{ hostname }}.key
+
+- name: set permissions on TLS domain private key
+  file:
+    path: /etc/ssl/certs/{{ hostname }}.key
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
 
 - name: copy default OpenSSL config
   copy:
     remote_src: yes
     src: /etc/pki/tls/openssl.cnf
-    dest: /home/{{ deploy_user }}/{{ hostname }}.cnf
+    dest: /home/{{ deploy_user }}/ssl/{{ hostname }}.cnf
   become: true
   become_user: "{{ deploy_user }}"
 
 - name: add DNS info to local config
-  shell: printf "[SAN]\nsubjectAltName=DNS:{{ hostname }},DNS:www.{{ hostname }}" >> /home/{{ deploy_user }}/{{ hostname }}.cnf
+  shell: printf "[SAN]\nsubjectAltName=DNS:{{ hostname }},DNS:www.{{ hostname }}" >> /home/{{ deploy_user }}/ssl/{{ hostname }}.cnf
   become: true
   become_user: "{{ deploy_user }}"
 
 - name: create Certificate Signing Request
-  shell: 'openssl req -new -sha256 -key /home/{{ deploy_user }}/{{ hostname }}.key -subj "/" -reqexts SAN -config /home/{{ deploy_user }}/{{ hostname }}.cnf > /home/{{ deploy_user }}/{{ hostname }}.csr'
+  shell: 'openssl req -new -sha256 -key /etc/ssl/certs/{{ hostname }}.key -subj "/" -reqexts SAN -config /home/{{ deploy_user }}/ssl/{{ hostname }}.cnf > /home/{{ deploy_user }}/ssl/{{ hostname }}.csr'
   args:
-    creates: /home/{{ deploy_user }}/{{ hostname }}.csr
+    creates: /home/{{ deploy_user }}/ssl/{{ hostname }}.csr
   become: true
   become_user: "{{ deploy_user }}"
 
 - name: get certificate from Let’s Encrypt
   shell: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
-         --account-key /home/{{ deploy_user }}/acme.key \
-         --csr /home/{{ deploy_user }}/{{ hostname }}.csr \
+         --account-key /home/{{ deploy_user }}/ssl/acme.key \
+         --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
          --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
-         > /home/{{ deploy_user }}/certs/{{ hostname }}.crt
+         > /etc/ssl/certs/{{ hostname }}.crt
   args:
-    creates: /home/{{ deploy_user }}/certs/{{ hostname }}.crt
-  become: true
-  become_user: "{{ deploy_user }}"
+    creates: /etc/ssl/certs/{{ hostname }}.crt
+
+- name: set permissions on certificate
+  file:
+    path: /etc/ssl/certs/{{ hostname }}.crt
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
 
 # This is an intermediate certificate; it's not strictly required but
 # not having it will cap your Qualys ranking at B
@@ -78,9 +87,9 @@
     name: "ACME renewal"
     special_time: monthly
     job: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
-         --account-key /home/{{ deploy_user }}/acme.key \
-         --csr /home/{{ deploy_user }}/{{ hostname }}.csr \
+         --account-key /home/{{ deploy_user }}/ssl/acme.key \
+         --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
          --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
-         > /home/{{ deploy_user }}/certs/{{ hostname }}.crt 2>> /var/log/acme_error.log
+         > /etc/ssl/certs/{{ hostname }}.crt 2>> /var/log/acme_error.log
     cron_file: acme_renewal
     user: "{{ deploy_user }}"
