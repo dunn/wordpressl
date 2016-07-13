@@ -5,8 +5,8 @@
 - name: add EPEL repo
   yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
 
-- name: add Webstatic PHP repo
-  yum: name=https://mirror.webtatic.com/yum/el7/webtatic-release.rpm state=present
+- name: add IUS repo
+  yum: name=https://centos7.iuscommunity.org/ius-release.rpm
 
 - name: update all yum packages
   yum: name=* state=latest
@@ -21,12 +21,14 @@
     - fail2ban
     - git
     - httpd-devel
+    - mod_php
     - mod_ssl
     - openssl-devel
-    - php56w
-    - php56w-common
-    - php56w-mysql
-    - php56w-opcache
+    - php70u-common
+    - php70u-devel
+    - php70u-mysqlnd
+    - php70u-opcache
+    - php70u-xmlrpc
     - python34-devel
     - sendmail
     - xz
