@@ -1,4 +1,13 @@
 ---
+# http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
+# https://chrisjean.com/change-timezone-in-centos/
+- name: set server to UTC
+  file:
+    state: link
+    src: /usr/share/zoneinfo/UTC
+    path: /etc/localtime
+    force: yes
+
 # Files and directories here need to be group-writable since it's the
 # 'apache' user that does the writes when you run update from the
 # WordPress web interface
