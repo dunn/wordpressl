@@ -59,6 +59,11 @@
   become: true
   become_user: "{{ deploy_user }}"
 
+- name: check if /etc/ssl/certs/{{ hostname }}.crt exists
+  stat:
+    path: /etc/ssl/certs/{{ hostname }}.crt
+  register: certfile
+
 - name: get certificate from Let’s Encrypt
   shell: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
          --account-key /home/{{ deploy_user }}/ssl/acme.key \
@@ -67,6 +72,7 @@
          > /etc/ssl/certs/{{ hostname }}.crt
   args:
     creates: /etc/ssl/certs/{{ hostname }}.crt
+  when: certfile.stat.exists == False or certfile.stat.size == 0
 
 - name: set permissions on certificate
   file:
