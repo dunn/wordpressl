@@ -1,8 +1,12 @@
 ---
 # TODO: automate copying these off the server to another location
 - name: create backups dir
-  file: path=/home/deploy/backups/db state=directory \
-        mode=0755 owner={{ deploy_user }} group={{ deploy_group }}
+  file:
+    path: /home/{{ deploy_user }}/backups/db
+    state: directory
+    mode: 0755
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
 
 - name: create backup script
   template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700
