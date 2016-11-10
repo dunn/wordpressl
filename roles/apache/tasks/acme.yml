@@ -93,3 +93,11 @@
          > /etc/ssl/certs/{{ hostname }}.crt 2>> /var/log/acme_error.log
     cron_file: acme_renewal
     user: "{{ deploy_user }}"
+
+- name: make ACME log writeable by {{ deploy_user }}
+  become: yes
+  file:
+    path: /var/log/acme_error.log
+    state: touch
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
