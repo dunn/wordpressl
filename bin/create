@@ -111,7 +111,7 @@ write_hosts > hosts
 write_conf > ansible.cfg
 run_cmd "ansible-playbook main.yml -vv -u root"
 if [ "$EXIT_STATUS" == "0" ]; then
-  rm -f config-*.cfg
+  rm -f hosts ./*.cfg
   echo "Provisioning complete."
 else
   echo
