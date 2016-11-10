@@ -8,12 +8,16 @@
   with_items:
     - "{{ project_dir }}"
 
-- name: remove default apache configs
-  file: path=/etc/httpd/conf.d/{{ item }}.conf state=absent
+# Including our own, to make re-tries easier
+- name: remove Apache configurations
+  file:
+    path: /etc/httpd/conf.d/{{ item }}.conf
+    state: absent
   with_items:
     - ssl
     - userdir
     - welcome
+    - wp
 
 - name: restart apache
   service: name=httpd state=restarted enabled=yes
