@@ -9,10 +9,15 @@
   yum: name=https://centos7.iuscommunity.org/ius-release.rpm
 
 - name: update all yum packages
-  yum: name=* state=latest
+  yum:
+    name: '*'
+    state: latest
 
 - name: install tools
-  yum: name={{ item }} state=present
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
   with_items:
     - MariaDB-client
     - MariaDB-server
