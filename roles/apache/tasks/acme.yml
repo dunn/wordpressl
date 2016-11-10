@@ -53,7 +53,7 @@
   become_user: "{{ deploy_user }}"
 
 - name: create Certificate Signing Request
-  shell: 'openssl req -new -sha256 -key /etc/ssl/certs/{{ hostname }}.key -subj "/" -reqexts SAN -config /home/{{ deploy_user }}/ssl/{{ hostname }}.cnf > /home/{{ deploy_user }}/ssl/{{ hostname }}.csr'
+  shell: 'openssl req -new -sha256 -key /etc/ssl/certs/{{ hostname }}.key -subj "/" -reqexts SAN -config /home/{{ deploy_user }}/ssl/{{ hostname }}.cnf > /home/{{ deploy_user }}/ssl/{{ hostname }}.csr 2>/dev/null'
   args:
     creates: /home/{{ deploy_user }}/ssl/{{ hostname }}.csr
   become: true
@@ -64,7 +64,7 @@
          --account-key /home/{{ deploy_user }}/ssl/acme.key \
          --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
          --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
-         > /etc/ssl/certs/{{ hostname }}.crt
+         > /etc/ssl/certs/{{ hostname }}.crt 2>/dev/null
   args:
     creates: /etc/ssl/certs/{{ hostname }}.crt
 
