@@ -4,7 +4,7 @@
     repo: https://github.com/diafygi/acme-tiny.git
     dest: /home/{{ deploy_user }}/acme-tiny
     # This is the latest commit; update as necessary
-    version: 7a5a2558c8d6e5ab2a59b9fec9633d9e63127971
+    version: daba51d37efd7c1f205f9da383b9b09968e30d29
   become: true
   become_user: "{{ deploy_user }}"
 
