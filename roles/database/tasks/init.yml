@@ -1,8 +1,14 @@
 ---
+- name: check for existing MariaDB configuration
+  stat:
+    path: /etc/my.cnf.d/wp.cnf
+  register: my_cnf
+
 - name: set MariaDB root password
   mysql_user:
     name: root
     password: "{{ root_db_pass }}"
+  when: my_cnf.stat.exists == False
 
 - name: create MariaDB configuration
   template:
