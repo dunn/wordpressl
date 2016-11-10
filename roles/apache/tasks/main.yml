@@ -15,9 +15,6 @@
     - userdir
     - welcome
 
-- name: restart apache
-  service: name=httpd state=restarted enabled=yes
-
 - include: acme.yml
 
 - name: configure virtual hosts
