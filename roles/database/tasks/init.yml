@@ -24,7 +24,11 @@
     login_password: "{{ root_db_pass }}"
 
 - name: remove test database
-  mysql_db: name=test state=present login_password={{ root_db_pass }} login_user=root
+  mysql_db:
+    name: test
+    state: absent
+    login_password: "{{ root_db_pass }}"
+    login_user: root
 
 - name: flush privileges
   no_log: True
