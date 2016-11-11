@@ -12,12 +12,16 @@ modification may be necessary for use elsewhere.
    DigitalOcean or the provider of your choice (note that it’s assumed
    you can SSH in as root initially).
 
-2. Run `bin/create`.  It will prompt you for the hostname, SSH key,
-   and passwords which are passed to Ansible.
+2. Run `bin/create`.  It will prompt you for the domain name, SSH key,
+   and passwords which are passed to Ansible.  These session variables
+   will be written to `session.yml`; you can pre-populate those
+   variables by copying `session.yml.template` to `session.yml` and
+   filing it out.
 
-3. If provisioning fails, the configuration is written to disk.
-   Delete it immediately if you don’t want to try again, since it will
-   contain passwords in plain-text.
+3. When provisioning completes, `session.yml` will be deleted.  If
+   provisioning fails and for some reason you don’t want to re-run the
+   job, you should delete it, since it will contain passwords in
+   plain-text.
 
 ## Prerequisites
 

@@ -116,6 +116,9 @@ run_cmd "ansible-playbook main.yml -e @session.yml -vv -u root"
 if [ "$EXIT_STATUS" == "0" ]; then
   rm hosts ansible.cfg session.yml
   echo "Provisioning complete."
+  echo
+  echo "You can now log in to $SERVER as $WP_ADMIN_USER"
+  echo "Database backups will be created on the server in /home/deploy/backups"
 else
   echo
   echo "$(tput bold)==> Configuration saved to $(ls config-* | tr -d '\n')$(tput sgr0)"
