@@ -92,10 +92,10 @@
   cron:
     name: "ACME renewal"
     special_time: monthly
-    job: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
-         --account-key /home/{{ deploy_user }}/ssl/acme.key \
-         --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
-         --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
+    job: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py
+         --account-key /home/{{ deploy_user }}/ssl/acme.key
+         --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr
+         --acme-dir {{ project_dir }}/.well-known/acme-challenge/
          > /etc/ssl/certs/{{ hostname }}.crt 2>> /var/log/acme_error.log
     cron_file: acme_renewal
     user: "{{ deploy_user }}"
