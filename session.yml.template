@@ -1,0 +1,9 @@
+---
+admin_email:
+deploy_pass:
+hostname:
+keyfile:
+root_db_pass:
+root_pass:
+wp_admin_pass:
+wp_db_pass:

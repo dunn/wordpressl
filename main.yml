@@ -3,25 +3,17 @@
   remote_user: root
   hosts: all
 
-  vars:
-    hostname: "{{ lookup('env', 'SERVER') }}"
-    keyfile: "{{ lookup('env', 'IDENTITY') }}.pub"
+  vars_files:
+    - session.yml
 
+  vars:
     project_dir: /var/www/html
 
-    root_pass: "{{ lookup('env', 'ROOT_PASS') }}"
     # After setup, root SSH access will be removed
     deploy_user: deploy
     deploy_group: apache
-    deploy_pass: "{{ lookup('env', 'DEPLOY_PASS') }}"
-
-    root_db_pass: "{{ lookup('env', 'ROOT_DB_PASS') }}"
-    wp_db_pass: "{{ lookup('env', 'WP_DB_PASS') }}"
-
-    wp_admin_pass: "{{ lookup('env', 'WP_ADMIN_PASS') }}"
-    admin_email: "{{ lookup('env', 'EMAIL') }}"
-
     become_user: deploy
+
   roles:
     - { role: prereqs }
     - { role: database }

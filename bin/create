@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
+cd "$(dirname ${BASH_SOURCE[0]})/../"
+
 #
 # Functions
 #
@@ -16,17 +20,17 @@ run_cmd() {
   fi
 }
 
-write_savepoint() {
+write_session() {
   cat <<EOF
-#!/bin/bash
-export DEPLOY_PASS='$DEPLOY_PASS'
-export EMAIL='$EMAIL'
-export IDENTITY='$IDENTITY'
-export ROOT_DB_PASS='$ROOT_DB_PASS'
-export ROOT_PASS='$ROOT_PASS'
-export SERVER='$SERVER'
-export WP_ADMIN_PASS='$WP_ADMIN_PASS'
-export WP_DB_PASS='$WP_DB_PASS'
+---
+admin_email: '$EMAIL'
+deploy_pass: '$DEPLOY_PASS'
+hostname: '$SERVER'
+keyfile: '$IDENTITY.pub'
+root_db_pass: '$ROOT_DB_PASS'
+root_pass: '$ROOT_PASS'
+wp_admin_pass: '$WP_ADMIN_PASS'
+wp_db_pass: '$WP_DB_PASS'
 EOF
 }
 
@@ -50,14 +54,8 @@ scp_if_ssh=True
 EOF
 }
 
-NOW="$(date "+%Y-%m-%d-%H%M%S")"
-export NOW
-
-# If they pass a config file from a previous try
-if [ -f "$1" ]; then
-  # shellcheck source=/dev/null
-  . "$1"
-else
+# If session variables don't exist
+if [ ! -f session.yml ]; then
   #
   # Set/export variables
   #
@@ -68,7 +66,7 @@ else
   read -r SERVER
   export SERVER
 
-  echo -n "Specify path to identity file (defaults to ~/.ssh/id_rsa): "
+  echo -n "Specify path to SSH private key (defaults to ~/.ssh/id_rsa): "
   read -r -e IDENTITY
   IDENTITY=${IDENTITY:-"$HOME/.ssh/id_rsa"}
   export IDENTITY
@@ -103,15 +101,16 @@ else
   export WP_ADMIN_PASS
   echo
 
-  write_savepoint > "config-$NOW.cfg"
-  chmod 600 "config-$NOW.cfg"
+  write_hosts > hosts
+  write_conf > ansible.cfg
+
+  write_session > session.yml
+  chmod 0600 session.yml
 fi
 
-write_hosts > hosts
-write_conf > ansible.cfg
-run_cmd "ansible-playbook main.yml -vv -u root"
+run_cmd "ansible-playbook main.yml -e @session.yml -vv -u root"
 if [ "$EXIT_STATUS" == "0" ]; then
-  rm -f hosts ./*.cfg
+  rm hosts ansible.cfg session.yml
   echo "Provisioning complete."
 else
   echo
