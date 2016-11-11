@@ -6,4 +6,5 @@ keyfile:
 root_db_pass:
 root_pass:
 wp_admin_pass:
+wp_admin_user:
 wp_db_pass:

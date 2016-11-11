@@ -35,7 +35,8 @@
   no_log: True
   command: /usr/local/bin/wp-cli --path={{ project_dir }} core install \
            --title="WordPress is so good" --url="https://www.{{ hostname }}" \
-           --admin_user=admin --admin_password={{ wp_admin_pass }} --admin_email={{ admin_email }}
+           --admin_user={{ wp_admin_user }} --admin_password={{ wp_admin_pass }} \
+           --admin_email={{ admin_email }}
 
 # This allows Apache to write files directly to the system, so updates
 # can be performed through the WordPress web interface
