@@ -37,7 +37,7 @@ add one later with `bin/add-tls`.
     Usage:
 
     ```shell
-    wp_url <https://new.url.com>
+    wp_url https://new.url.com
     ```
 
     It will prompt you for the password to the WordPress database.
