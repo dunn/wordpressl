@@ -1,23 +1,4 @@
 ---
-- name: clone acme-tiny repo
-  git:
-    repo: https://github.com/diafygi/acme-tiny.git
-    dest: /home/{{ deploy_user }}/acme-tiny
-    # This is the latest commit; update as necessary
-    version: daba51d37efd7c1f205f9da383b9b09968e30d29
-  become: true
-  become_user: "{{ deploy_user }}"
-
-- name: create ACME directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_group }}"
-  with_items:
-    - "{{ project_dir }}/.well-known/acme-challenge"
-    - /home/{{ deploy_user }}/ssl
-
 # https://letsencrypt.org/how-it-works/
 # https://github.com/diafygi/acme-tiny#how-to-use-this-script
 # https://github.com/diafygi/letsencrypt-nosudo#how-to-use-the-signing-script
@@ -107,3 +88,20 @@
     state: touch
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
+
+- name: configure virtual hosts
+  template:
+    src: wp.conf.j2
+    dest: /etc/httpd/conf.d/wp.conf
+    force: yes
+
+- name: install custom SSL config
+  copy:
+    src: ssl.conf
+    dest: /etc/httpd/conf.d/ssl.conf
+
+- name: restart Apache
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

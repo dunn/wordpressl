@@ -1,0 +1,37 @@
+---
+- name: create apache user
+  user:
+    name: apache
+    state: present
+    group: "{{ deploy_group }}"
+
+- name: create project directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+  with_items:
+    - "{{ project_dir }}"
+
+# Including our own, to make re-tries easier
+- name: remove Apache configurations
+  file:
+    path: /etc/httpd/conf.d/{{ item }}.conf
+    state: absent
+  with_items:
+    - ssl
+    - userdir
+    - welcome
+    - wp
+
+- name: configure virtual host
+  template:
+    src: wp.conf.j2
+    dest: /etc/httpd/conf.d/wp.conf
+
+- name: restart Apache
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

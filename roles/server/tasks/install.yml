@@ -1,0 +1,30 @@
+---
+- name: add EPEL repo
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+- name: add IUS repo
+  yum:
+    name: https://centos7.iuscommunity.org/ius-release.rpm
+
+- name: update all yum packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: install tools
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - httpd-devel
+    - mod_php
+    - mod_ssl
+    - openssl-devel
+    - php70u-common
+    - php70u-devel
+    - php70u-mysqlnd
+    - php70u-opcache
+    - php70u-xmlrpc
+    - sendmail
