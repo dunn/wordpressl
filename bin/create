@@ -118,7 +118,7 @@ if [ ! -f session.yml ]; then
   chmod 0600 session.yml
 fi
 
-run_cmd "ansible-playbook main.yml -e @session.yml -vv -u root"
+run_cmd "ansible-playbook main.yml -vv"
 if [ "$EXIT_STATUS" == "0" ]; then
   rm hosts ansible.cfg session.yml
   echo "Provisioning complete."

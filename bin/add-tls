@@ -77,7 +77,7 @@ if [ ! -f session.yml ]; then
   chmod 0600 session.yml
 fi
 
-run_cmd "ansible-playbook tls.yml -e @session.yml -vv --ask-become-pass "
+run_cmd "ansible-playbook tls.yml -vv --ask-become-pass "
 if [ "$EXIT_STATUS" == "0" ]; then
   rm hosts ansible.cfg session.yml
   echo "Provisioning complete."
