@@ -1,6 +1,6 @@
 ---
-- selinux: policy=targeted state=enforcing
-
+- include: install.yml
+- include: selinux.yml
 - include: fail2ban.yml
 - include: firewalld.yml
 - include: ssh.yml
