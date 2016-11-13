@@ -12,7 +12,9 @@
   user: name=root password='{{ root_crypted.stdout }}'
 
 - name: create {{ deploy_group }} group
-  group: name={{ deploy_group }} state=present
+  group:
+    name: "{{ deploy_group }}"
+    state: present
 
 - name: hash {{ deploy_user }} password
   shell: python3 -c 'import crypt; print(crypt.crypt("{{ deploy_pass }}", crypt.mksalt(crypt.METHOD_SHA512)))' \
@@ -21,8 +23,11 @@
   register: deploy_crypted
 
 - name: create deploy user
-  user: name={{ deploy_user }} password='{{ deploy_crypted.stdout }}' \
-        state=present group={{ deploy_group }}
+  user:
+    name: "{{ deploy_user }}"
+    password: "{{ deploy_crypted.stdout }}"
+    state: present
+    groups: "{{ deploy_group }},wheel"
 
 - name: add key to deploy user’s authorized_keys
   authorized_key: user={{ deploy_user }} key={{ lookup('file', keyfile) }}

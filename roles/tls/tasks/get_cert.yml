@@ -10,11 +10,13 @@
   become_user: "{{ deploy_user }}"
 
 - name: create TLS domain private key
+  become: yes
   shell: openssl genrsa 4096 > /etc/ssl/certs/{{ hostname }}.key
   args:
     creates: /etc/ssl/certs/{{ hostname }}.key
 
 - name: set permissions on TLS domain private key
+  become: yes
   file:
     path: /etc/ssl/certs/{{ hostname }}.key
     owner: "{{ deploy_user }}"
@@ -46,6 +48,7 @@
   register: certfile
 
 - name: get certificate from Let’s Encrypt
+  become: yes
   shell: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
          --account-key /home/{{ deploy_user }}/ssl/acme.key \
          --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
@@ -56,6 +59,7 @@
   when: certfile.stat.exists == False or certfile.stat.size == 0
 
 - name: set permissions on certificate
+  become: yes
   file:
     path: /etc/ssl/certs/{{ hostname }}.crt
     owner: "{{ deploy_user }}"
@@ -64,12 +68,16 @@
 # This is an intermediate certificate; it's not strictly required but
 # not having it will cap your Qualys ranking at B
 - name: download Let’s Encrypt X3 certificate
+  become: yes
   get_url:
     url: https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem
     checksum: sha256:e446c5e9dbef9d09ac9f7027c034602492437a05ff6c40011d7235fca639c79a
     dest: /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
 
 - name: set up certificate renewal
+  become: yes
   cron:
     name: "ACME renewal"
     special_time: monthly
@@ -90,17 +98,20 @@
     group: "{{ deploy_group }}"
 
 - name: configure virtual hosts
+  become: yes
   template:
     src: wp.conf.j2
     dest: /etc/httpd/conf.d/wp.conf
     force: yes
 
 - name: install custom SSL config
+  become: yes
   copy:
     src: ssl.conf
     dest: /etc/httpd/conf.d/ssl.conf
 
 - name: restart Apache
+  become: yes
   service:
     name: httpd
     state: restarted

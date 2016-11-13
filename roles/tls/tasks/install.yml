@@ -1,14 +1,17 @@
 ---
 - name: add EPEL repo
+  become: yes
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 - name: update all yum packages
+  become: yes
   yum:
     name: '*'
     state: latest
 
 - name: install tools
+  become: yes
   yum:
     name: "{{ item }}"
     state: present

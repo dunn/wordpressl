@@ -21,15 +21,8 @@ run_cmd() {
 write_session() {
   cat <<EOF
 ---
-admin_email: '$EMAIL'
-deploy_pass: '$DEPLOY_PASS'
 hostname: '$SERVER'
-keyfile: '$IDENTITY.pub'
-root_db_pass: '$ROOT_DB_PASS'
-root_pass: '$ROOT_PASS'
-with_tls: '$WITH_TLS'
-wp_admin_pass: '$WP_ADMIN_PASS'
-wp_admin_user: '$WP_ADMIN_USER'
+with_tls: 'yes'
 wp_db_pass: '$WP_DB_PASS'
 EOF
 }
@@ -66,44 +59,10 @@ if [ ! -f session.yml ]; then
   read -r SERVER
   export SERVER
 
-  echo -n "Do you want to create a TLS certificate for $SERVER? (y/n) "
-  read -r WITH_TLS
-  if [[ ! "$WITH_TLS" =~ ^y(es)?$ ]]; then
-    WITH_TLS=""
-  fi
-  export WITH_TLS
-
   echo -n "Specify path to SSH private key (defaults to ~/.ssh/id_rsa): "
   read -r -e IDENTITY
   IDENTITY=${IDENTITY:-"$HOME/.ssh/id_rsa"}
   export IDENTITY
-
-  echo -n "Enter a username for the WP admin: "
-  read -r WP_ADMIN_USER
-  export WP_ADMIN_USER
-
-  echo -n "Enter an email address for the WP admin: "
-  read -r EMAIL
-  export EMAIL
-
-  echo -n "Enter password for WordPress admin user: "
-  read -r -s WP_ADMIN_PASS
-  export WP_ADMIN_PASS
-
-  echo
-  echo -n "Enter password for the server's root user: "
-  read -r -s ROOT_PASS
-  export ROOT_PASS
-
-  echo
-  echo -n "Enter password for the server's 'deploy' user: "
-  read -r -s DEPLOY_PASS
-  export DEPLOY_PASS
-
-  echo
-  echo -n "Enter password for the MariaDB root user: "
-  read -r -s ROOT_DB_PASS
-  export ROOT_DB_PASS
 
   echo
   echo -n "Enter password for the MariaDB wordpress user: "
@@ -118,16 +77,15 @@ if [ ! -f session.yml ]; then
   chmod 0600 session.yml
 fi
 
-run_cmd "ansible-playbook main.yml -e @session.yml -vv -u root"
+run_cmd "ansible-playbook tls.yml -e @session.yml -vv --ask-become-pass "
 if [ "$EXIT_STATUS" == "0" ]; then
   rm hosts ansible.cfg session.yml
   echo "Provisioning complete."
   echo
-  echo "You can now log in to $SERVER as $WP_ADMIN_USER"
-  echo "Database backups will be created on the server in /home/deploy/backups"
+  echo "$SERVER now has a TLS certificate and can be reached at https://$SERVER"
 else
   echo
-  echo "$(tput bold)==> Configuration saved to session.yml"
-  echo 'Re-run with `bin/create`, or delete session.yml NOW.'
+  echo "$(tput bold)==> Configuration saved to session.yml$(tput sgr0)"
+  echo 'Re-run `bin/create`, or delete session.yml NOW.'
   echo
 fi

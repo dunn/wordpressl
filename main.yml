@@ -18,7 +18,9 @@
     - { role: users }
     - { role: database }
     - { role: server }
-    - { role: tls }
-    - { role: wordpress, become: true, become_user: "{{ deploy_user }}" }
+    - { role: wordpress }
+    # It's important this comes after the WordPress role since it
+    # modifies the wp_options database table
+    - { role: tls, when: with_tls != "" }
     - { role: cleanup }
     - { role: security }

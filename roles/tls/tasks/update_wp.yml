@@ -1,0 +1,8 @@
+---
+- name: update WordPress URLs
+  no_log: True
+  command: mysql -u wordpress --password={{ wp_db_pass }} wordpress \
+           -e "update wp_options set option_value = \"https://www.{{ hostname }}\" where option_name = '{{ item }}';"
+  with_items:
+    - "siteurl"
+    - "home"
