@@ -12,35 +12,35 @@ modification may be necessary for use elsewhere.
    DigitalOcean or the provider of your choice (note that it’s assumed
    you can SSH in as root initially).
 
-2. Run `bin/create`.  It will prompt you for the domain name, SSH key,
-   and passwords which are passed to Ansible.  These session variables
-   will be written to `session.yml`; you can pre-populate those
-   variables by copying `session.yml.template` to `session.yml` and
-   filing it out.
+2. Run `bin/create`.  It will prompt you for the domain name/IP
+   address, SSH key, and passwords which are passed to Ansible.  These
+   session variables will be written to `session.yml`; you can
+   pre-populate those variables by copying `session.yml.template` to
+   `session.yml` and filing it out.
 
 3. When provisioning completes, `session.yml` will be deleted.  If
    provisioning fails and for some reason you don’t want to re-run the
    job, you should delete it, since it will contain passwords in
    plain-text.
 
+If you choose not to create a TLS certificate for the server, you can
+add one later with `bin/add-tls`.
+
 ## Prerequisites
 
 - Ansible 2.1.x
 
-# Gotchas and troubleshooting
+## Extras
 
-- The hostname you provide to Ansible can be the IP address of your
-  server, or the domain name.  The hostname will be used for the
-  Apache virtual host as well as the WordPress configuration.
+- A script will be installed at `/usr/local/bin/wp_url` on the server;
+    this script lets you update the hostname in the WordPress database.
+    Usage:
 
-    If you use an IP address, comment out the `- include: acme.yml`
-    line in `roles/apache/tasks/main.yml`.  Otherwise a SSL/TLS
-    certificate will be issued for the IP address rather than the
-    domain name.  You’ll have to run the SSL/TLS tasks manually.
+    ```shell
+    wp_url <https://new.url.com>
+    ```
 
-    If you use an IP address and later point a domain name at your
-    server, you’ll need to update the WordPress configuration, since
-    WordPress does some redirection of its own and will only function
-    correctly if it knows what the domain name is.  On the server, run
-    `/usr/local/bin/wp_url "https://www.new.url"` to update the
-    information in WordPress.
+    It will prompt you for the password to the WordPress database.
+
+- You can download the WordPress database for backing up or migrating
+  it by running `bin/download-db`.
