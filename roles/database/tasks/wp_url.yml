@@ -1,0 +1,8 @@
+---
+- name: install wp_url script
+  copy:
+    src: wp_url
+    dest: /usr/local/bin/wp_url
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: 0755

@@ -1,7 +1,4 @@
 ---
-- name: add MariaDB repo
-  copy: src=MariaDB.repo dest=/etc/yum.repos.d/MariaDB.repo
-
 - name: add EPEL repo
   yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
 
@@ -19,9 +16,6 @@
     state: present
     update_cache: yes
   with_items:
-    - MariaDB-client
-    - MariaDB-server
-    - MySQL-python
     - curl-devel
     - fail2ban
     - git

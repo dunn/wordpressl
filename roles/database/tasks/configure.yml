@@ -1,4 +1,10 @@
 ---
+- name: start MariaDB
+  service:
+    name: mariadb
+    state: restarted
+    enabled: yes
+
 - name: check for existing MariaDB configuration
   stat:
     path: /etc/my.cnf.d/wp.cnf
