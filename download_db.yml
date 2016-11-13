@@ -1,0 +1,11 @@
+---
+- name: Add a TLS certificate
+  remote_user: deploy
+  hosts: all
+
+  vars_files:
+    - base.yml
+    - session.yml
+
+  roles:
+    - { role: download_db }
