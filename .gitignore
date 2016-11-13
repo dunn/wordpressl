@@ -1,3 +1,4 @@
-hosts
 /*.cfg
 /*.retry
+hosts
+session.yml
