@@ -14,12 +14,6 @@
 - name: create {{ deploy_group }} group
   group: name={{ deploy_group }} state=present
 
-- name: create apache user
-  user:
-    name: apache
-    state: present
-    group: "{{ deploy_group }}"
-
 - name: hash {{ deploy_user }} password
   shell: python3 -c 'import crypt; print(crypt.crypt("{{ deploy_pass }}", crypt.mksalt(crypt.METHOD_SHA512)))' \
          | tr -d '\n'

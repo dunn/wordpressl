@@ -15,7 +15,7 @@
     become_user: deploy
 
   roles:
-    - { role: prereqs }
+    - { role: users }
     - { role: database }
     - { role: server }
     - { role: wordpress, become: true, become_user: "{{ deploy_user }}" }
