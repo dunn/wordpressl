@@ -4,15 +4,8 @@
   hosts: all
 
   vars_files:
+    - base.yml
     - session.yml
-
-  vars:
-    project_dir: /var/www/html
-
-    # After setup, root SSH access will be removed
-    deploy_user: deploy
-    deploy_group: apache
-    become_user: deploy
 
   roles:
     - { role: tls }
