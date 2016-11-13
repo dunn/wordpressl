@@ -54,8 +54,6 @@
          --csr /home/{{ deploy_user }}/ssl/{{ hostname }}.csr \
          --acme-dir {{ project_dir }}/.well-known/acme-challenge/ \
          > /etc/ssl/certs/{{ hostname }}.crt
-  args:
-    creates: /etc/ssl/certs/{{ hostname }}.crt
   when: certfile.stat.exists == False or certfile.stat.size == 0
 
 - name: set permissions on certificate
