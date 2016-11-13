@@ -36,8 +36,8 @@ EOF
 
 write_hosts() {
   cat <<EOF
-[centos]
-wp ansible_ssh_host=$SERVER
+[default]
+$SERVER ansible_ssh_host=$SERVER
 EOF
 }
 
