@@ -20,8 +20,6 @@
   with_items:
     - httpd-devel
     - mod_php
-    - mod_ssl
-    - openssl-devel
     - php70u-common
     - php70u-devel
     - php70u-mysqlnd

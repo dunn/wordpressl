@@ -19,6 +19,8 @@
   with_items:
     - curl-devel
     - git
+    - mod_ssl
+    - openssl-devel
 
 - name: clone acme-tiny repo
   git:
