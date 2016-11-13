@@ -37,5 +37,3 @@
     - python34-devel
     - sendmail
     - xz
-
-- include: wp-cli.yml

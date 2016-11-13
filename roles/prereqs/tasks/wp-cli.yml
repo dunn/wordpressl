@@ -1,7 +1,0 @@
----
-- name: install wp-cli
-  get_url:
-    url: https://github.com/wp-cli/wp-cli/releases/download/v{{ cli_version }}/wp-cli-{{ cli_version }}.phar
-    checksum: sha256:{{ cli_sha }}
-    dest: /usr/local/bin/wp-cli
-    mode: 0755

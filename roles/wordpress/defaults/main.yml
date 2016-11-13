@@ -1,4 +1,8 @@
 ---
 # https://wordpress.org/download/release-archive/
-WP_VERSION: 4.6.1
+WP_VER: 4.6.1
 WP_SHA: 873f562cdea14d6305b9ad2f41f18a557d99cd8694b4a0056a33970e127abfee
+
+# Command-line interface to WordPress: http://wp-cli.org/
+CLI_VER: 0.25.0
+CLI_SHA: 20afc72b502d072bc26e95c1e61c12554277a56eb7451df2b92a46d32393bb97
