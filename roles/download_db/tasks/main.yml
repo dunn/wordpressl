@@ -3,15 +3,12 @@
   register: date
 
 - name: dump WordPress database
-  become: yes
   shell: mysqldump wordpress > /home/{{ deploy_user }}/backups/db/export-{{ date.stdout }}.sql
 
 - name: compress database dump
-  become: yes
   command: xz -f /home/{{ deploy_user }}/backups/db/export-{{ date.stdout }}.sql
 
 - name: download database dump
-  become: yes
   fetch:
     src: /home/{{ deploy_user }}/backups/db/export-{{ date.stdout }}.sql.xz
     dest: "{{ lookup('env', 'PWD') }}"

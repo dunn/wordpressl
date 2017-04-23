@@ -12,23 +12,21 @@ modification may be necessary for use elsewhere.
    DigitalOcean or the provider of your choice (note that it’s assumed
    you can SSH in as root initially).
 
-2. Run `bin/create`.  It will prompt you for the domain name/IP
-   address, SSH key, and passwords which are passed to Ansible.  These
-   session variables will be written to `session.yml`; you can
-   pre-populate those variables by copying `session.yml.template` to
-   `session.yml` and filing it out.
+1. Edit `inventory` and set `ansible_ssh_host` to the hostname of the
+   server.  If you want a TLS certificate generated, this needs to be
+   a domain name rather than an IP address.
 
-3. When provisioning completes, `session.yml` will be deleted.  If
-   provisioning fails and for some reason you don’t want to re-run the
-   job, you should delete it, since it will contain passwords in
-   plain-text.
+1. Download the extra roles with `ansible-galaxy install --roles-path roles -r roles/requirements.yml`.
 
-If you choose not to create a TLS certificate for the server, you can
-add one later with `bin/add-tls`.
+1. Run `ansible-playbook main.yml -i inventory`.
+
+1. If you choose not to create a TLS certificate for the server, you
+   can add one later with `ansible-playbook tls.yml -i inventory`.
 
 ## Prerequisites
 
-- Ansible 2.1.x
+- Ansible 2.2.0.0 or higher with passlib (`brew install ansible` will
+  meet this requirement).
 
 ## Extras
 
@@ -43,4 +41,4 @@ add one later with `bin/add-tls`.
     It will prompt you for the password to the WordPress database.
 
 - You can download the WordPress database for backing up or migrating
-  it by running `bin/download-db`.
+  it by running `ansible-playbook download_db.yml -i inventory`.

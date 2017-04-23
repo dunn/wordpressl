@@ -2,15 +2,15 @@
 - name: create apache user
   user:
     name: apache
-    state: present
     group: "{{ deploy_group }}"
 
 - name: create project directories
   file:
+    group: "{{ deploy_group }}"
+    mode: 2755
+    owner: "{{ deploy_user }}"
     path: "{{ item }}"
     state: directory
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_group }}"
   with_items:
     - "{{ project_dir }}"
 
@@ -31,7 +31,7 @@
     dest: /etc/httpd/conf.d/wp.conf
 
 - name: restart Apache
-  service:
+  systemd:
+    enabled: yes
     name: httpd
     state: restarted
-    enabled: yes

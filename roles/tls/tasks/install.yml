@@ -1,42 +1,20 @@
 ---
 - name: add EPEL repo
-  become: yes
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 - name: update all yum packages
-  become: yes
   yum:
     name: '*'
     state: latest
+    update_cache: yes
 
 - name: install tools
-  become: yes
   yum:
     name: "{{ item }}"
-    state: present
-    update_cache: yes
   with_items:
     - curl-devel
     - git
     - mod_ssl
     - openssl-devel
-
-- name: clone acme-tiny repo
-  git:
-    repo: https://github.com/diafygi/acme-tiny.git
-    dest: /home/{{ deploy_user }}/acme-tiny
-    # This is the latest commit; update as necessary
-    version: daba51d37efd7c1f205f9da383b9b09968e30d29
-  become: true
-  become_user: "{{ deploy_user }}"
-
-- name: create ACME directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_group }}"
-  with_items:
-    - "{{ project_dir }}/.well-known/acme-challenge"
-    - /home/{{ deploy_user }}/ssl
+    - python34-devel

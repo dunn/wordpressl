@@ -5,7 +5,11 @@
 
   vars_files:
     - base.yml
-    - session.yml
+
+  vars_prompt:
+    - name: wp_db_pass
+      private: yes
+      prompt: password for MariaDB wordpress user
 
   roles:
-    - { role: tls }
+    - role: tls

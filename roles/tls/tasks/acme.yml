@@ -1,0 +1,148 @@
+---
+# https://letsencrypt.org/how-it-works/
+# https://github.com/diafygi/acme-tiny#how-to-use-this-script
+# https://github.com/diafygi/letsencrypt-nosudo#how-to-use-the-signing-script
+- name: clone acme-tiny repo
+  git:
+    repo: https://github.com/diafygi/acme-tiny.git
+    dest: /home/{{ deploy_user }}/acme-tiny
+    # This is the latest commit; update as necessary
+    version: daba51d37efd7c1f205f9da383b9b09968e30d29
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: create ACME directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+  with_items:
+    - "{{ project_dir }}/.well-known/acme-challenge"
+    - /home/{{ deploy_user }}/acme
+
+- name: generate TLS user private key
+  command: openssl genrsa 4096
+  register: tls_user
+
+- name: write TLS user private key
+  copy:
+    content: "{{ tls_user.stdout }}"
+    dest: /home/{{ deploy_user }}/acme/user.key
+    force: yes
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+
+- name: generate TLS domain private key
+  command: openssl genrsa 4096
+  register: tls_domain
+
+- name: write TLS domain private key
+  copy:
+    content: "{{ tls_domain.stdout }}"
+    dest: /etc/ssl/certs/domain.key
+    force: yes
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+
+- name: copy default OpenSSL config
+  copy:
+    dest: /home/{{ deploy_user }}/acme/acme.cnf
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+    remote_src: yes
+    src: /etc/pki/tls/openssl.cnf
+
+- name: add DNS info to local config
+  lineinfile:
+    dest: /home/{{ deploy_user }}/acme/acme.cnf
+    line: "[SAN]\nsubjectAltName=DNS:{{ ansible_ssh_host }},DNS:www.{{ ansible_ssh_host }}"
+  become: true
+  become_user: "{{ deploy_user }}"
+
+- name: generate Certificate Signing Request
+  command: openssl req -new -sha256 \
+                       -key /etc/ssl/certs/domain.key \
+                       -subj "/" -reqexts SAN \
+                       -config /home/{{ deploy_user }}/acme/acme.cnf
+  register: csr
+
+- name: write Certificate Signing Request
+  copy:
+    content: "{{ csr.stdout }}"
+    dest: /home/{{ deploy_user }}/acme/acme.csr
+    force: yes
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+
+- name: generate TLS certificate
+  command: python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py \
+                   --account-key /home/{{ deploy_user }}/acme/user.key \
+                   --csr /home/{{ deploy_user }}/acme/acme.csr \
+                   --acme-dir {{ project_dir }}/.well-known/acme-challenge
+  register: cert
+
+- name: write TLS certificate
+  copy:
+    content: "{{ cert.stdout }}"
+    dest: /etc/ssl/certs/acme.pem
+    force: yes
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+
+# This is an intermediate certificate; it's not strictly required but
+# not having it will cap your Qualys ranking at B
+- name: download Let’s Encrypt X3 certificate
+  get_url:
+    checksum: sha256:{{ intermediate_cert_sha }}
+    dest: /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+    url: https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem
+
+- name: ensure /home/{{ deploy_user }}/bin exists
+  file:
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+    path: /home/{{ deploy_user }}/bin
+    state: directory
+
+- name: install renew.sh script
+  template:
+    dest: /home/{{ deploy_user }}/bin/renew.sh
+    group: "{{ deploy_group }}"
+    mode: 0755
+    owner: "{{ deploy_user }}"
+    src: renew.sh.j2
+
+- name: schedule certificate renewal
+  cron:
+    cron_file: acme_renewal
+    job: /home/{{ deploy_user }}/bin/renew.sh 2>> /var/log/acme_error.log
+    name: "ACME renewal"
+    special_time: monthly
+    user: "{{ deploy_user }}"
+
+- name: make ACME log writeable by {{ deploy_user }}
+  file:
+    group: "{{ deploy_group }}"
+    owner: "{{ deploy_user }}"
+    path: /var/log/acme_error.log
+    state: touch
+
+- name: configure virtual hosts
+  template:
+    dest: /etc/httpd/conf.d/wp.conf
+    force: yes
+    src: wp.conf.j2
+
+- name: install custom SSL config
+  copy:
+    dest: /etc/httpd/conf.d/ssl.conf
+    src: ssl.conf
+
+- name: restart Apache
+  systemd:
+    enabled: yes
+    name: httpd
+    state: restarted

@@ -1,42 +1,49 @@
 ---
-- name: create install directory
+- name: ensure {{ download_dir }} exists
   file:
-    path: /home/{{ deploy_user }}/install
+    path: "{{ download_dir }}"
     state: directory
 
 - name: download WordPress
   get_url:
     url: https://wordpress.org/wordpress-{{ WP_VER }}.tar.gz
-    dest: /home/{{ deploy_user }}/install/wordpress-{{ WP_VER }}.tar.gz
+    dest: "{{ download_dir }}/wordpress-{{ WP_VER }}.tar.gz"
     checksum: sha256:{{ WP_SHA }}
 
 - name: unpack WordPress
   unarchive:
-    src: /home/{{ deploy_user }}/install/wordpress-{{ WP_VER }}.tar.gz
-    dest: /home/{{ deploy_user }}/install/
+    src: "{{ download_dir }}/wordpress-{{ WP_VER }}.tar.gz"
+    dest: "{{ download_dir }}"
     remote_src: yes
 
 - name: copy WordPress to {{ project_dir }}
-  shell: cp -r /home/{{ deploy_user }}/install/wordpress/* {{ project_dir }}/
+  shell: cp -r {{ download_dir }}/wordpress/* {{ project_dir }}/
   args:
     creates: "{{ project_dir }}/wp-settings.php"
 
-- stat: path={{ project_dir }}/wp-config.php
+- stat:
+    path: "{{ project_dir }}/wp-config.php"
   register: wp_config
 
 - name: configure WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --path={{ project_dir }} core config \
-           --dbname=wordpress --dbuser=wordpress --dbpass={{ wp_db_pass }}
+  command: /usr/local/bin/wp-cli core config \
+                                 --dbname=wordpress \
+                                 --dbpass={{ wp_db_pass }}
+                                 --dbuser=wordpress \
+                                 --path={{ project_dir }}
   when: wp_config.stat.exists == False
 
   # exits with 0 when already installed
 - name: install WordPress
   no_log: True
-  command: /usr/local/bin/wp-cli --path={{ project_dir }} core install \
-           --title="WordPress is so good" --url="http://{{ hostname }}" \
-           --admin_user={{ wp_admin_user }} --admin_password={{ wp_admin_pass }} \
-           --admin_email={{ admin_email }}
+  command: /usr/local/bin/wp-cli core install \
+                                 --admin_email={{ wp_admin_email }} \
+                                 --admin_password={{ wp_admin_pass }} \
+                                 --admin_user={{ wp_admin_user }} \
+                                 --path={{ project_dir }} \
+                                 --title="WordPress is so good" \
+                                 --url="http://{{ ansible_ssh_host }}"
 
 # This allows Apache to write files directly to the system, so updates
 # can be performed through the WordPress web interface
@@ -44,3 +51,20 @@
   lineinfile:
     dest: "{{ project_dir }}/wp-config.php"
     line: "define('FS_METHOD', 'direct');"
+
+# Files and directories here need to be group-writable since it's the
+# 'apache' user that does the writes when you run update from the
+# WordPress web interface
+- name: set directory permissions of {{ project_dir }}
+  command: find {{ project_dir }} -type d -exec chmod 0775 {} \;
+
+- name: set file permissions of {{ project_dir }}
+  command: find {{ project_dir }} -type f -exec chmod 0664 {} \;
+
+- name: auto-update WordPress plugins
+  cron:
+    cron_file: ansible_wp_plugins
+    job: "/usr/local/bin/wp-cli --path={{ project_dir }} plugin update --all >> /var/log/wordpress_update.log 2>&1"
+    name: "update WP plugins"
+    special_time: weekly
+    user: "{{ deploy_user }}"

@@ -1,4 +1,12 @@
 <VirtualHost *:80>
-  ServerName {{ hostname }}
+  ServerName www.{{ ansible_ssh_host }}
+  ServerAlias {{ ansible_ssh_host }} www.{{ ansible_ssh_host }}
+
   DocumentRoot {{ project_dir }}/
+
+  <Directory {{ project_dir }}/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+  </Directory>
 </VirtualHost>

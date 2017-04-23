@@ -5,15 +5,53 @@
 
   vars_files:
     - base.yml
-    - session.yml
+
+  vars_prompt:
+    - name: with_tls
+      default: yes
+      private: no
+      prompt: create and install TLS certificate?
+
+    - name: deploy_pass
+      confirm: yes
+      encrypt: sha512_crypt
+      private: yes
+      prompt: password for deploy user
+      salt_size: 7
+
+    - name: root_db_pass
+      confirm: yes
+      private: yes
+      prompt: password for MariaDB root user
+
+    - name: wp_db_pass
+      confirm: yes
+      private: yes
+      prompt: password for MariaDB wordpress user
+
+    - name: wp_admin_user
+      default: admin
+      prompt: name of WordPress admin user
+      private: no
+
+    - name: wp_admin_email
+      prompt: email address for WordPress admin user
+      private: no
+
+    - name: wp_admin_pass
+      confirm: yes
+      private: yes
+      prompt: password for WordPress admin user
 
   roles:
-    - { role: users }
-    - { role: database }
-    - { role: server }
-    - { role: wordpress }
+    - role: dunn.tz
+    - role: dunn.mosh
+    - role: users
+    - role: database
+    - role: server
+    - role: wordpress
     # It's important this comes after the WordPress role since it
     # modifies the wp_options database table
-    - { role: tls, when: with_tls != "" }
-    - { role: cleanup }
-    - { role: security }
+    - role: tls
+      when: with_tls
+    - role: dunn.security

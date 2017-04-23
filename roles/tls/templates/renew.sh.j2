@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+python3 /home/{{ deploy_user }}/acme-tiny/acme_tiny.py --account-key /home/{{ deploy_user }}/acme/user.key --csr /home/{{ deploy_user }}/acme/acme.csr --acme-dir {{ project_dir }}/.well-known/acme-challenge > /etc/ssl/certs/acme.pem

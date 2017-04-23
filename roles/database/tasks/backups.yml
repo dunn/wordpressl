@@ -2,15 +2,22 @@
 # TODO: automate copying these off the server to another location
 - name: create backups dir
   file:
-    path: /home/{{ deploy_user }}/backups/db
-    state: directory
+    group: "{{ deploy_group }}"
     mode: 0755
     owner: "{{ deploy_user }}"
-    group: "{{ deploy_group }}"
+    path: /home/{{ deploy_user }}/backups/db
+    state: directory
 
 - name: create backup script
-  template: src=wp-backup.j2 dest=/usr/local/bin/wp-backup mode=0700
+  template:
+    dest: /usr/local/bin/wp-backup
+    mode: 0700
+    src: wp-backup.j2
 
 - name: run backups every day
-  cron: user=root special_time=daily name="db backup" cron_file=ansible_db \
-        job='/usr/local/bin/wp-backup >> /var/log/wordpress_backup.log 2>&1'
+  cron:
+    cron_file: ansible_db
+    job: '/usr/local/bin/wp-backup >> /var/log/wordpress_backup.log 2>&1'
+    name: "db backup"
+    special_time: daily
+    user: root

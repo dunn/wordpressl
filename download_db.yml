@@ -5,7 +5,6 @@
 
   vars_files:
     - base.yml
-    - session.yml
 
   roles:
-    - { role: download_db }
+    - role: download_db

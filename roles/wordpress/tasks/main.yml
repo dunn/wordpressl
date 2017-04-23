@@ -1,5 +1,3 @@
 ---
 - include: wp-cli.yml
 - include: install.yml
-  become: true
-  become_user: "{{ deploy_user }}"

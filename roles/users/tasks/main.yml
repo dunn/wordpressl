@@ -1,3 +1,23 @@
 ---
-- include: install.yml
-- include: configure.yml
+- name: create {{ deploy_group }} group
+  group:
+    name: "{{ deploy_group }}"
+    state: present
+
+- name: create deploy user
+  user:
+    generate_ssh_key: yes
+    groups: "{{ deploy_group }},wheel"
+    name: "{{ deploy_user }}"
+    password: "{{ deploy_pass }}"
+    ssh_key_bits: 4096
+    update_password: on_create
+
+- name: copy SSH keys to {{ deploy_user }}
+  copy:
+    dest: /home/{{ deploy_user }}/.ssh/authorized_keys
+    group: "{{ deploy_group }}"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    remote_src: yes
+    src: /root/.ssh/authorized_keys

@@ -12,16 +12,16 @@
   yum:
     name: '*'
     state: latest
+    update_cache: yes
 
 - name: install tools
   yum:
     name: "{{ item }}"
-    state: present
-    update_cache: yes
   with_items:
     - MariaDB-client
     - MariaDB-server
     - MySQL-python
+    # for acme-tiny
     - python34-devel
     # for backups
     - xz

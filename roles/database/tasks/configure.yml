@@ -1,9 +1,9 @@
 ---
 - name: start MariaDB
-  service:
-    name: mariadb
-    state: restarted
+  systemd:
     enabled: yes
+    name: mariadb
+    state: started
 
 - name: check for existing MariaDB configuration
   stat:
@@ -32,17 +32,17 @@
 # `mysql_secure_installation`
 - name: remove anonymous roles
   mysql_user:
-    name: ''
     host_all: yes
-    state: absent
     login_password: "{{ root_db_pass }}"
+    name: ''
+    state: absent
 
 - name: remove test database
   mysql_db:
-    name: test
-    state: absent
     login_password: "{{ root_db_pass }}"
     login_user: root
+    name: test
+    state: absent
 
 - name: flush privileges
   no_log: True
@@ -50,24 +50,24 @@
 
 - name: create wordpress database
   mysql_db:
-    name: wordpress
-    state: present
     login_password: "{{ root_db_pass }}"
     login_user: root
+    name: wordpress
+    state: present
 
 - name: create wordpress role
   mysql_user:
+    login_password: "{{ root_db_pass }}"
+    login_user: root
     name: wordpress
     password: "{{ wp_db_pass }}"
     priv: "wordpress.*:ALL"
     state: present
-    login_password: "{{ root_db_pass }}"
-    login_user: root
     update_password: on_create
 
 - name: create MariaDB log directory
   file:
-    path: /var/log/mysql
-    owner: mysql
     group: mysql
+    owner: mysql
+    path: /var/log/mysql
     state: directory

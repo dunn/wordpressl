@@ -11,18 +11,17 @@
   yum:
     name: '*'
     state: latest
+    update_cache: yes
 
 - name: install tools
   yum:
     name: "{{ item }}"
-    state: present
-    update_cache: yes
   with_items:
     - httpd-devel
     - mod_php
-    - php70u-common
-    - php70u-devel
-    - php70u-mysqlnd
-    - php70u-opcache
-    - php70u-xmlrpc
+    - php71u-common
+    - php71u-devel
+    - php71u-mysqlnd
+    - php71u-opcache
+    - php71u-xmlrpc
     - sendmail

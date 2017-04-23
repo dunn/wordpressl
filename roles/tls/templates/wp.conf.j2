@@ -1,12 +1,12 @@
 <VirtualHost *:80>
-  ServerName www.{{ hostname }}
+  ServerName www.{{ ansible_ssh_host }}
   # https://wiki.apache.org/httpd/RedirectSSL
-  Redirect permanent / https://www.{{ hostname }}/
+  Redirect permanent / https://www.{{ ansible_ssh_host }}/
 </VirtualHost>
 
 <VirtualHost _default_:443>
-  ServerName www.{{ hostname }}
-  ServerAlias {{ hostname }} www.{{ hostname }}
+  ServerName www.{{ ansible_ssh_host }}
+  ServerAlias {{ ansible_ssh_host }} www.{{ ansible_ssh_host }}
   DocumentRoot {{ project_dir }}/
 
   SSLEngine on
@@ -26,8 +26,8 @@
   # https://github.com/h5bp/server-configs-apache/blob/e603554f559b1be4861553239e22a7844075bedc/src/security/x-xss-protection.conf
   Header always set X-XSS-Protection "1; mode=block"
 
-  SSLCertificateFile /etc/ssl/certs/{{ hostname }}.crt
-  SSLCertificateKeyFile /etc/ssl/certs/{{ hostname }}.key
+  SSLCertificateFile /etc/ssl/certs/acme.pem
+  SSLCertificateKeyFile /etc/ssl/certs/domain.key
   SSLCertificateChainFile /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
   SSLCACertificateFile /etc/ssl/certs/ca-bundle.crt
 
@@ -48,8 +48,8 @@
       RewriteCond %{REQUEST_FILENAME} !-d
       RewriteRule . /index.php [L]
 
-      RewriteCond %{HTTP_HOST} ^{{ hostname }} [NC]
-      RewriteRule ^(.*)$ https://www.{{ hostname }}/$1 [L,R=301]
+      RewriteCond %{HTTP_HOST} ^{{ ansible_ssh_host }} [NC]
+      RewriteRule ^(.*)$ https://www.{{ ansible_ssh_host }}/$1 [L,R=301]
     </IfModule>
   </Directory>
 </VirtualHost>

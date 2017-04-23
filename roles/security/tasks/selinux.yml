@@ -1,4 +1,0 @@
----
-- selinux:
-    policy: targeted
-    state: enforcing
