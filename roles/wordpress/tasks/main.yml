@@ -1,3 +1,4 @@
 ---
 - include: wp-cli.yml
 - include: install.yml
+- include: fail2ban.yml

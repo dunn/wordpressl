@@ -1,0 +1,6 @@
+[apache-xmlrpc]
+enabled  = true
+port     = http,https
+filter   = apache-xmlrpc
+logpath  = /var/log/httpd/wordpress_access.log
+maxretry = 2

@@ -1,0 +1,38 @@
+---
+- name: update all yum packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: install tools
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - fail2ban
+
+- name: start fail2ban
+  systemd:
+    enabled: yes
+    name: fail2ban
+    state: started
+
+# xml-rpc attacks are when someone repeatedly tries to login to your
+# WordPress instance; by default there's no limit to how many times in
+# a row they can do this, so it functions as a denial-of-service
+# attack
+- name: install xml-rpc fail2ban filter
+  copy:
+    src: apache-xmlrpc.filter
+    dest: /etc/fail2ban/filter.d/apache-xmlrpc.conf
+    mode: 664
+    owner: apache
+    group: apache
+
+- name: install xml-rpc fail2ban jail
+  copy:
+    src: apache-xmlrpc.jail
+    dest: /etc/fail2ban/jail.local
+    mode: 664
+    owner: apache
+    group: apache
